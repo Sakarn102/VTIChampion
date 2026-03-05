@@ -1,4 +1,4 @@
-package main;
+package com.vti.vti_champion;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

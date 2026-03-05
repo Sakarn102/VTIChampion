@@ -1,3 +1,28 @@
 spring:
   application:
     name: back-end
+
+  # Kết nối MySQL
+  datasource:
+    url: jdbc:mysql://mysql-cda59c1-vtichampion.i.aivencloud.com:28921/vti_champion
+    username: avnadmin
+    password: ${DB_PASSWORD}
+
+  # Cấu hình Hibernate/JPA
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        one-indexed-parameters: true
+        size-parameter: size
+        page-parameter: page
+      sort:
+        sort-parameter: sort
