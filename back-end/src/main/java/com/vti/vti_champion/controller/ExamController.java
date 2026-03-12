@@ -1,6 +1,7 @@
 package com.vti.vti_champion.controller;
 
 import com.vti.vti_champion.dto.request.CreateExamRequest;
+import com.vti.vti_champion.dto.request.UpdateExamRequest;
 import com.vti.vti_champion.dto.response.ExamResponse;
 import com.vti.vti_champion.service.classes.ExamService;
 import jakarta.validation.Valid;
@@ -50,5 +51,12 @@ public class ExamController {
         examService.deleteExam(id);
 
         return ResponseEntity.ok("Xoá thành công Exam có ID = " + id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateExam(@PathVariable Integer id, @Valid @RequestBody UpdateExamRequest request) {
+        examService.updateExam(id, request);
+
+        return ResponseEntity.ok(Map.of("message", "Update Exam thành công!"));
     }
 }

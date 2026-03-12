@@ -39,6 +39,6 @@ public class Exam {
     @JoinColumn(name = "class_id")
     private Class classRoom;
 
-    @OneToMany(mappedBy = "exam", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions; // Cascade ALL ở đây để khi xóa Question thì mới mất Answer
 }

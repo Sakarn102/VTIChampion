@@ -136,4 +136,58 @@ public class ExamService implements IExamService {
         examRepository.deleteById(examId);
     }
 
+    @Override
+    @Transactional
+    public ExamResponse updateExam(Integer examId, UpdateExamRequest request) {
+        // 1. Tìm Exam
+        Exam exam = examRepository.findById(examId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy bài thi!"));
+
+        // 3. CHUẨN BỊ BẢN SAO MỚI (Logic này sẽ tạo ra dòng mới trong DB)
+        List<Question> clonedQuestions = new ArrayList<>();
+        for (Integer qId : request.getQuestionIds()) {
+            Question originalQuestion = questionRepository.findById(qId)
+                    .orElseThrow(() -> new RuntimeException("Câu hỏi ID " + qId + " không tồn tại!"));
+
+            // Tạo object mới hoàn toàn -> Sẽ sinh ra ID mới
+            Question cloneQ = new Question();
+            cloneQ.setContent(originalQuestion.getContent());
+            cloneQ.setDifficultyLevel(originalQuestion.getDifficultyLevel());
+            cloneQ.setCreator(originalQuestion.getCreator());
+            cloneQ.setExam(exam); // Gắn vào Exam này
+
+            List<Answer> cloneAs = new ArrayList<>();
+            if (originalQuestion.getAnswers() != null) {
+                for (Answer originalA : originalQuestion.getAnswers()) {
+                    Answer cloneA = new Answer();
+                    cloneA.setContent(originalA.getContent());
+                    cloneA.setIsCorrect(originalA.getIsCorrect());
+                    cloneA.setQuestion(cloneQ);
+                    cloneAs.add(cloneA);
+                }
+            }
+            cloneQ.setAnswers(cloneAs);
+            clonedQuestions.add(cloneQ);
+        }
+
+        // 4. XOÁ CÁC BẢN SAO CŨ CỦA EXAM NÀY (Để thay thế bằng bộ mới)
+        // Đảm bảo trong Exam entity có orphanRemoval = true
+        exam.getQuestions().clear();
+        // Flush để xóa sạch các câu cũ trong DB trước khi thêm mới, tránh lỗi FK
+        examRepository.saveAndFlush(exam);
+
+        // 5. CẬP NHẬT THÔNG TIN VÀ THÊM CÂU HỎI MỚI
+        exam.setTitle(request.getTitle().trim());
+        exam.setCode(request.getCode().toUpperCase());
+        exam.setDuration(request.getDuration());
+
+        exam.getQuestions().addAll(clonedQuestions);
+
+        // 6. LƯU LẠI
+        examRepository.save(exam);
+
+        ExamResponse response = modelMapper.map(exam, ExamResponse.class);
+        response.setClassName(exam.getClassRoom().getName());
+        return response;
+    }
 }
