@@ -31,6 +31,9 @@ public class Question {
     @Column(name = "create_date")
     private LocalDateTime createDate;
 
+    @Column(name = "explanation", columnDefinition = "TEXT")
+    private String explanation;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exam_id", nullable = false)
     private Exam exam;

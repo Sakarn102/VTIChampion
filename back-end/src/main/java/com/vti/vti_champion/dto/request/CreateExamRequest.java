@@ -9,22 +9,22 @@ import java.util.List;
 @Data
 public class CreateExamRequest {
 
-    @NotNull(message = "Code không được để trống")
+    @NotNull(message = "Code cannot be null!")
     private String code;
 
-    @NotBlank(message = "Title không được để trống") //@NotBlank chỉ dùng cho String
+    @NotBlank(message = "Title cannot be null!") //@NotBlank chỉ dùng cho String
     @Size(max = 200)
     private String title;
 
-    @NotNull(message = "Duration không được để trống")
-    @Min(value = 1, message = "Thời gian tối thiểu là 1 phút")
-    @Max(value = 500, message = "Thời gian quá dài")
+    @NotNull(message = "Duration cannot be null!")
+    @Min(value = 1, message = "Minimal time is one one minute!")
+    @Max(value = 500, message = "Minimal duration is to long!")
     private Integer duration;
 
-    @NotNull(message = "ID lớp học (class_id) không được để trống")
+    @NotNull(message = "Class ID (class_id) cannot be null!")
     private Integer classId;
 
-    @NotNull(message = "ID ngươì tạo (creator_id) không được để trống")
+    @NotNull(message = "ID ngươì tạo (creator_id) cannot be null!")
     private Integer creatorId;
 
     @NotEmpty(message = "Vui lòng chọn ít nhất 1 câu hỏi trong ngân hàng đề thi") // Xác thực dữ liệu đầu vào

@@ -38,7 +38,7 @@ public class User {
     @CreationTimestamp // lấy thời gian hiện tại
     private LocalDateTime createDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "role_id", nullable = false)
     private Setting role;
 

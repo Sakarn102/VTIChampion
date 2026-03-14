@@ -6,11 +6,6 @@ jwt:
 spring:
   application:
     name: back-end
-#  autoconfigure:
-#    exclude:
-#      - org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration
-#      - org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration
-#      - org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration
 
   # Kết nối MySQL
   datasource:
@@ -31,5 +26,7 @@ cloudinary:
   cloud-name: dxcl0xspi
   api-key: 211214697518363
   api-secret: Fv5oyDxkwVIljQ5EdfDnvf7lZ-4
-
+logging:
+  level:
+    org.springframework.security: DEBUG
 

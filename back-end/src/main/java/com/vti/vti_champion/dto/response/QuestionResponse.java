@@ -13,5 +13,6 @@ public class QuestionResponse {
     private Integer questionId;
     private String content;
     private String difficultyLevel;
+    private String explanation;
     private List<AnswerResponse> answers;
 }

@@ -72,6 +72,7 @@ public class ExamService implements IExamService {
             cloneQuestion.setContent(originalQuestion.getContent());
             cloneQuestion.setDifficultyLevel(originalQuestion.getDifficultyLevel());
             cloneQuestion.setCreator(originalQuestion.getCreator());
+            cloneQuestion.setExplanation(originalQuestion.getExplanation());
             cloneQuestion.setExam(exam);
 
             // 3. TẠO BẢN SAO CÁC ĐÁP ÁN (New hoàn toàn)
@@ -103,7 +104,6 @@ public class ExamService implements IExamService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Page<ExamResponse> getAllExams(
             String keyword, Integer classId, Integer creatorId,
             LocalDate startDate, LocalDate endDate, Pageable pageable
@@ -133,7 +133,7 @@ public class ExamService implements IExamService {
         Exam exam = examRepository.findById(examId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy bài thi ID: " + examId));
 
-        examRepository.deleteById(examId);
+        examRepository.delete(exam);
     }
 
     @Override
@@ -154,6 +154,7 @@ public class ExamService implements IExamService {
             cloneQ.setContent(originalQuestion.getContent());
             cloneQ.setDifficultyLevel(originalQuestion.getDifficultyLevel());
             cloneQ.setCreator(originalQuestion.getCreator());
+            cloneQ.setExplanation(originalQuestion.getExplanation());
             cloneQ.setExam(exam); // Gắn vào Exam này
 
             List<Answer> cloneAs = new ArrayList<>();
@@ -184,7 +185,7 @@ public class ExamService implements IExamService {
         exam.getQuestions().addAll(clonedQuestions);
 
         // 6. LƯU LẠI
-        examRepository.save(exam);
+//        examRepository.save(exam);
 
         ExamResponse response = modelMapper.map(exam, ExamResponse.class);
         response.setClassName(exam.getClassRoom().getName());

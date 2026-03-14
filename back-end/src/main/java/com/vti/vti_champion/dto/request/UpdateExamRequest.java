@@ -22,6 +22,6 @@ public class UpdateExamRequest {
     @NotNull(message = "ID lớp học (class_id) không được để trống")
     private Integer classId;
 
-    @NotEmpty(message = "Vui lòng chọn ít nhất 1 câu hỏi trong ngân hàng đề thi") // Xác thực dữ liệu đầu vào
+    @NotEmpty(message = "Vui lòng chọn ít nhất 1 câu hỏi trong ngân hàng đề thi")
     private List<Integer> questionIds;
 }
