@@ -13,6 +13,7 @@ spring:
     username: avnadmin
     password: ${DB_PASSWORD}
 
+
   # Cấu hình Hibernate/JPA
   jpa:
     hibernate:

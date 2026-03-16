@@ -18,6 +18,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "prestart": "npx -y copyfiles -u 1 \"src/mcq/**/*\" public",
+    "prebuild": "npx -y copyfiles -u 1 \"src/mcq/**/*\" public",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
