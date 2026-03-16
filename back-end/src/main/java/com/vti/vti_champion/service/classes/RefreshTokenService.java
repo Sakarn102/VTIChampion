@@ -32,4 +32,10 @@ public class RefreshTokenService implements IRefreshTokenService {
 
         return refreshTokenRepository.save(token);
     }
+
+    @Override
+    @Transactional
+    public void deleteByToken(String token) {
+        refreshTokenRepository.deleteByToken(token);
+    }
 }

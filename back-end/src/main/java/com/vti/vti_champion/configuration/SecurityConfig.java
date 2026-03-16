@@ -43,7 +43,10 @@ public class SecurityConfig {
                         // Những API công khai (không cần login)
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/users/me").permitAll()
+                        .requestMatchers("/api/v1/exams/").hasRole("Admin")
+                        .requestMatchers("").hasRole("Admin")
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/v1/auth/logout").authenticated() // Chỉ user đã login mới được logout
                         .anyRequest().authenticated()
                 )
                 // UserDetailsService

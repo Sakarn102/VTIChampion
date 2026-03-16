@@ -1,16 +1,19 @@
 package com.vti.vti_champion.controller;
 
 import com.vti.vti_champion.configuration.CustomUserDetails;
+import com.vti.vti_champion.dto.request.UpdateUserRequest;
 import com.vti.vti_champion.dto.response.SettingResponse;
 import com.vti.vti_champion.dto.response.UserResponse;
+import com.vti.vti_champion.entity.User;
+import com.vti.vti_champion.service.classes.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -19,6 +22,8 @@ import java.util.Map;
 @CrossOrigin("http://localhost:3000")
 @RequiredArgsConstructor
 public class UserController {
+
+    private final UserService userService;
 
     @GetMapping("/me")
     public ResponseEntity<?> getMe(Authentication authentication) {
@@ -42,6 +47,27 @@ public class UserController {
         return  ResponseEntity.ok(Map.of(
                 "message", "Get thông tin user thành công"
         ));
-
     }
+
+    @PutMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateMe(
+            Authentication authentication,
+            @Valid @RequestPart(value = "data", required = false) UpdateUserRequest request,
+            @RequestPart(value = "avatar", required = false) MultipartFile avatar)
+    {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Integer userId = userDetails.getId();
+
+        User updatedUser = userService.updateMe(userId, request, avatar);
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Updated Successfully!",
+                "data", updatedUser
+        ));
+    }
+
 }
