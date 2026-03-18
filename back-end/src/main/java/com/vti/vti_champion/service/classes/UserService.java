@@ -120,4 +120,9 @@ public class UserService implements IUserService {
 
         return userRepository.save(user);
     }
+
+    @Override
+    public boolean findUserByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
 }

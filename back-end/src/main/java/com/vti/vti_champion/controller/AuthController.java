@@ -3,6 +3,7 @@ package com.vti.vti_champion.controller;
 import com.vti.vti_champion.dto.request.LoginRequest;
 import com.vti.vti_champion.dto.request.RegisterRequest;
 import com.vti.vti_champion.entity.User;
+import com.vti.vti_champion.service.classes.OtpService;
 import com.vti.vti_champion.service.interfaces.IAuthService;
 import com.vti.vti_champion.service.interfaces.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import java.util.Map;
 public class AuthController {
     private final IUserService userService;
     private final IAuthService authService;
+    private final OtpService otpService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login (@RequestBody LoginRequest request, HttpServletResponse response) {
@@ -50,6 +52,22 @@ public class AuthController {
 
        return  ResponseEntity.ok(Map.of("message", "Logout successfully!"));
 
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+        boolean result = userService.findUserByEmail(email);
+        if (result) {
+            otpService.sendCode(email);
+
+            return ResponseEntity.ok(Map.of(
+                    "message", "Verification Code has been sent to your email!"
+            ));
+        }
+
+        return ResponseEntity.badRequest().body(Map.of(
+                "message", "Account not found!"
+        ));
     }
 
 }

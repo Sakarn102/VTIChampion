@@ -9,4 +9,5 @@ public interface IUserService {
     public User getUserByUsernameOrEmail(String username, String email);
     User register(RegisterRequest request);
     User updateMe(Integer userId, UpdateUserRequest request, MultipartFile avatar);
+    boolean findUserByEmail(String email);
 }

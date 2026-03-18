@@ -31,7 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         String token = null;
 
-        // 🔹 Lấy accessToken từ cookie
+        //  Lấy accessToken từ cookie
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("accessToken".equals(cookie.getName())) {

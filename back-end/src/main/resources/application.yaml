@@ -10,12 +10,24 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 10MB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: anhn58022@gmail.com
+    password: uvru mnsc rpgc ewyb
+    properties:
+      mail:
+        debug: true
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
   # Kết nối MySQL
   datasource:
     url: jdbc:mysql://mysql-cda59c1-vtichampion.i.aivencloud.com:28921/vti_champion
     username: avnadmin
-    password: AVNS_IPs1JxjzELk2vNN7oXx
+    password: ${DB_PASSWORD}
 
   # Cấu hình Hibernate/JPA
   jpa:

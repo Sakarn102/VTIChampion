@@ -22,7 +22,7 @@ import java.util.Map;
 public class ExamController {
     private final ExamService examService;
 
-    @PostMapping
+    @PostMapping("/create-exam")
     public ResponseEntity<?> createExam(@Valid @RequestBody CreateExamRequest request) {
         System.out.println("Dữ liệu nhận được: " + request.toString());
         examService.createExam(request);
