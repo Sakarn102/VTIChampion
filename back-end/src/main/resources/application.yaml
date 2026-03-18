@@ -6,6 +6,10 @@ jwt:
 spring:
   application:
     name: back-end
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
 
   # Kết nối MySQL
   datasource:

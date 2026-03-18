@@ -9,7 +9,7 @@ import lombok.Data;
 public class RegisterRequest {
     @NotBlank(message = "fullName.notBlank")
     @Size(max = 50, message = "fullName.maximum")
-    private String fullName;
+    private String fullname;
 
     @NotBlank(message = "username.notBlank")
     @Size(max = 50, message = "username.maximum")
@@ -22,4 +22,5 @@ public class RegisterRequest {
 
     @NotBlank(message = "password.notBlank")
     private String password;
+
 }
