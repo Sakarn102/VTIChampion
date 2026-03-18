@@ -25,8 +25,8 @@ spring:
 
   # Kết nối MySQL
   datasource:
-    url: jdbc:mysql://mysql-cda59c1-vtichampion.i.aivencloud.com:28921/vti_champion
-    username: avnadmin
+    url: ${DB_URL}
+    username: ${DB_USER}
     password: ${DB_PASSWORD}
 
   # Cấu hình Hibernate/JPA
