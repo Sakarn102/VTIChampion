@@ -1,5 +1,6 @@
 package com.vti.vti_champion.entity;
 
+import com.vti.vti_champion.constant.Type;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -30,6 +31,10 @@ public class Exam {
     @CreationTimestamp
     @Column(name = "create_date", updatable = false)
     private LocalDateTime createDate;
+
+    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")

@@ -1,7 +1,10 @@
 package com.vti.vti_champion.configuration;
 
 import com.vti.vti_champion.entity.User;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -25,6 +25,7 @@ public class UserService implements IUserService {
     private final ModelMapper modelMapper;
     private final SettingRepository settingRepository;
     private final CloudinaryService cloudinaryService;
+    private final OtpService otpService;
 
     private static final String DEFAULT_AVATAR = "https://i.pinimg.com/736x/21/91/6e/21916e491ef0d796398f5724c313bbe7.jpg";
 
@@ -50,9 +51,15 @@ public class UserService implements IUserService {
                 .orElseThrow(() -> new RuntimeException("Role not found!"));
         user.setRole(setting);
         user.setAvatarUrl(DEFAULT_AVATAR);
-        user.setIsActive(true);
 
-        return userRepository.save(user);
+        user.setIsActive(true);
+        user.setEnabled(false);
+
+        User savedUser = userRepository.save(user);
+
+        otpService.sendCode(savedUser.getEmail());
+
+        return savedUser;
     }
 
     @Override

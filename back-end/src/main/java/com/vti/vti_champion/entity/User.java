@@ -45,4 +45,8 @@ public class User {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id")
     private Setting department;
+
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled = false; //
+
 }

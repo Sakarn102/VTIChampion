@@ -23,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -37,9 +38,11 @@ public class AuthServiceImpl implements IAuthService {
 
     @Override
     public Map<String, Object> login(LoginRequest request, HttpServletResponse response) {
+
         try {
             // 1. Xác thực người dùng
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsernameOrEmail(), request.getPassword()));
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getUsernameOrEmail(), request.getPassword()));
 
             // 2. Lấy UserDetails và User Entity
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();

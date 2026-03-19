@@ -1,9 +1,11 @@
 package com.vti.vti_champion.controller;
 
 import com.vti.vti_champion.dto.request.LoginRequest;
+import com.vti.vti_champion.dto.request.OtpRequest;
 import com.vti.vti_champion.dto.request.RegisterRequest;
 import com.vti.vti_champion.entity.User;
 import com.vti.vti_champion.service.classes.OtpService;
+import com.vti.vti_champion.service.classes.RegisterCheckService;
 import com.vti.vti_champion.service.interfaces.IAuthService;
 import com.vti.vti_champion.service.interfaces.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +21,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/auth")
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 @Validated
 @Slf4j
@@ -27,6 +29,7 @@ public class AuthController {
     private final IUserService userService;
     private final IAuthService authService;
     private final OtpService otpService;
+    private final RegisterCheckService registerCheckService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login (@RequestBody LoginRequest request, HttpServletResponse response) {
@@ -37,13 +40,29 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         try {
-            User savedUser = userService.register(request);
+            userService.register(request);
             return ResponseEntity.ok(Map.of(
-                    "message", "Register successfully!"
+                    "message", "Đăng ký thành công! Vui lòng kiểm tra Email để nhận mã xác thực!"
             ));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @PostMapping("/verify-code")
+    public ResponseEntity<?> verifyCode(@RequestBody OtpRequest request) {
+        otpService.verifyOtp(request.getEmail(), request.getCode());
+        return ResponseEntity.ok(Map.of(
+                "message", "Xác thực thành công! Giờ bạn có thể đăng nhập!"
+        ));
+    }
+
+    @PostMapping("/send-code")
+    public ResponseEntity<?> sendCode(@Valid @RequestBody RegisterRequest request) {
+        registerCheckService.checkInfo(request);
+        otpService.sendCode(request.getEmail());
+
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/logout")
@@ -54,7 +73,7 @@ public class AuthController {
 
     }
 
-    @PostMapping("/verify-email")
+    @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestParam String email) {
         boolean result = userService.findUserByEmail(email);
         if (result) {
