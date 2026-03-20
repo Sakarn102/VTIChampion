@@ -45,9 +45,18 @@ function App() {
         <Route path="exams" element={<ExamManagement />} />
         <Route path="questions" element={<QuestionManagement />} />
         <Route path="results" element={<ResultsManagement />} />
-        <Route path="reports" element={<GenericAdminPage title="Báo cáo & Phân tích" />} />
-        <Route path="settings" element={<GenericAdminPage title="Cài đặt hệ thống" />} />
-        <Route path="notifications" element={<GenericAdminPage title="Quản lý Thông báo" />} />
+        <Route
+          path="reports"
+          element={<GenericAdminPage title="Báo cáo & Phân tích" />}
+        />
+        <Route
+          path="settings"
+          element={<GenericAdminPage title="Cài đặt hệ thống" />}
+        />
+        <Route
+          path="notifications"
+          element={<GenericAdminPage title="Quản lý Thông báo" />}
+        />
       </Route>
 
       <Route path="*" element={<Navigate to="/login" />} />
