@@ -18,6 +18,8 @@ import ExamManagement from "./pages/Admin/ExamManagement";
 import QuestionManagement from "./pages/Admin/QuestionManagement";
 import ResultsManagement from "./pages/Admin/ResultsManagement";
 import GenericAdminPage from "./pages/Admin/GenericAdminPage";
+import ForgotPassword from "./pages/Shared/ForgotPassword";
+import ResetPassword from "./pages/Shared/ResetPassword";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       <Route path="/" element={<LayoutRoot />}>
         <Route index element={<Home />} />

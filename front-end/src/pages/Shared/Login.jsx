@@ -107,7 +107,10 @@ export default function Login() {
             </Form.Item>
 
             <div style={{ textAlign: "right" }}>
-              <a href="/forgot" style={{ fontSize: "13px", color: "#1890ff" }}>
+              <a
+                href="/forgot-password"
+                style={{ fontSize: "13px", color: "#1890ff" }}
+              >
                 Quên mật khẩu?
               </a>
             </div>
