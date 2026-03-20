@@ -34,6 +34,7 @@ public class UserController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
         UserResponse userResponse = new UserResponse();
+        userResponse.setId(userDetails.getId());
         userResponse.setUsername(userDetails.getUsername());
         userResponse.setFullname(userDetails.getFullName());
         userResponse.setEmail(userDetails.getEmail());
@@ -45,7 +46,8 @@ public class UserController {
         userResponse.setRole(settingResponse);
 
         return  ResponseEntity.ok(Map.of(
-                "message", "Get thông tin user thành công"
+                "message", "Get thông tin user thành công",
+                "data", userResponse
         ));
     }
 
@@ -68,6 +70,27 @@ public class UserController {
                 "message", "Updated Successfully!",
                 "data", updatedUser
         ));
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllUsers(org.springframework.data.domain.Pageable pageable) {
+        org.springframework.data.domain.Page<UserResponse> responses = userService.getAllUsers(pageable).map(user -> {
+            UserResponse res = new UserResponse();
+            res.setId(user.getId());
+            res.setUsername(user.getUsername());
+            res.setEmail(user.getEmail());
+            res.setFullname(user.getFullname());
+            res.setAvatarUrl(user.getAvatarUrl());
+            res.setIsActive(user.getIsActive());
+            
+            SettingResponse role = new SettingResponse();
+            if (user.getRole() != null) {
+                role.setName(user.getRole().getName());
+            }
+            res.setRole(role);
+            return res;
+        });
+        return ResponseEntity.ok(responses);
     }
 
 }

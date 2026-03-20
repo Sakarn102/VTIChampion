@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import "../../styles/Home.css";
 import { useEffect } from "react";
 import { message } from "antd";
+import ProfileDropdown from "../../components/ProfileDropdown";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -150,7 +151,9 @@ export default function Home() {
                 </svg>
                 <div className="notif-badge">3</div>
               </div>
-              <div className="user-avatar">HS</div>
+              <ProfileDropdown>
+                <div className="user-avatar">HS</div>
+              </ProfileDropdown>
             </div>
           </div>
 

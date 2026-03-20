@@ -1,5 +1,5 @@
 import axiosClient from "./axiosClient";
-import { toast } from "react-toastify";
+import { message } from "antd";
 
 /**
  * @param {Object} params - Chứa các field: page, size, keyworld, classId, creatorId, startDate, endDate
@@ -13,12 +13,20 @@ export async function getExams(params) {
       size: params.size || 5,
     };
 
-    const response = await axiosClient.get(`/exams`, { params: queryParams });
-
-    // axiosClient (đã có interceptor) sẽ trả về trực tiếp đối tượng Page<ExamResponse>
+    // Correct path from ExamController is /exams/getAll
+    const response = await axiosClient.get(`/exams/getAll`, { params: queryParams });
     return response;
   } catch (error) {
-    toast.error("Không thể tải danh sách bài thi!");
+    message.error("Không thể tải danh sách bài thi!");
     throw error;
   }
 }
+
+export const examApi = {
+  getAll: (params) => getExams(params),
+  create: (data) => axiosClient.post("/exams/create-exam", data),
+  update: (id, data) => axiosClient.put(`/exams/${id}`, data),
+  delete: (id) => axiosClient.delete(`/exams/${id}`)
+};
+
+export default examApi;
