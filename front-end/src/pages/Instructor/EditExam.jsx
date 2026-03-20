@@ -19,7 +19,7 @@ export default function EditExam() {
     const fetchExam = async () => {
       try {
         const data = await getAllExams();
-        const foundExam = data.content?.find(e => e.examId == examId);
+        const foundExam = data.content?.find(e => (e.examId == examId || e.id == examId));
         if (foundExam) {
           setExam(foundExam);
           setFormData({
@@ -44,40 +44,44 @@ export default function EditExam() {
   return (
     <>
       
-<div className="screen active" id="edit-exam">
-  <div className="home-screen">
-    <div className="app-header">
-      <div className="app-logo"><div className="logo-dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>MCQ Training</div>
-      <nav className="app-nav">
-        <a onClick={() => console.log('Action triggered')} className="cursor-pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Dashboard</a><a className="active cursor-pointer" onClick={() => navigate('/exam-list')}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg> Quản lý Exam</a><a onClick={() => console.log('Action triggered')} className="cursor-pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><path d="M17 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Học viên</a><a onClick={() => console.log('Action triggered')} className="cursor-pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Báo cáo</a>
-      </nav>
-      <div className="header-right">
-        <div className="instructor-header-profile">
-          <div className="instructor-avatar-mini">T</div>
-          <div><div className="instructor-profile-name">Trung Hiện</div><div className="instructor-profile-role">Instructor</div></div>
-        </div>
-      </div>
-    </div>
-        <div className="home-content" style={{ maxWidth: '860px' }}>
-      {loading ? (
-        <div className="table-loading">
-          Đang tải dữ liệu...
-        </div>
-      ) : !exam ? (
-        <div className="table-loading" style={{ color: 'red' }}>
-          Không tìm thấy bài thi.
-          <button onClick={() => navigate('/exam-list')} className="btn-primary-mini" style={{ display: 'block', margin: '20px auto', padding: '10px 20px' }}>Quay lại danh sách</button>
-        </div>
-      ) : (
-      <>
-      {/*  Breadcrumb  */}
-      <div className="breadcrumb">
-        <a onClick={() => navigate('/exam-list')}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg> Danh sách bài thi</a>
-        <span>›</span>
-        <a onClick={() => navigate('/exams/' + exam.examId)}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> {exam.title}</a>
-        <span>›</span>
-        <span className="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Chỉnh sửa</span>
-      </div>
+    <div className="edit-exam-container" style={{ padding: 0 }}>
+      {/* Page content */}
+      <div className="home-content" style={{ maxWidth: '860px', padding: 0 }}>
+        {loading ? (
+          <div className="table-loading">Đang tải dữ liệu...</div>
+        ) : !exam ? (
+          <div className="table-loading" style={{ color: 'red' }}>
+            Không tìm thấy bài thi.
+            <button onClick={() => navigate('/teacher/exams')} className="btn-primary-mini" style={{ display: 'block', margin: '20px auto', padding: '10px 20px' }}>Quay lại danh sách</button>
+          </div>
+        ) : (
+          <>
+            {/* Breadcrumb */}
+            <div className="breadcrumb" style={{ marginTop: 0 }}>
+              <a onClick={() => navigate('/teacher/exams')}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon">
+                  <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+                  <rect x="9" y="3" width="6" height="4" rx="1" ry="1" />
+                </svg> 
+                Danh sách bài thi
+              </a>
+              <span>›</span>
+              <a onClick={() => navigate('/teacher/exams/' + exam.examId)}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg> 
+                {exam.title}
+              </a>
+              <span>›</span>
+              <span className="active">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg> 
+                Chỉnh sửa
+              </span>
+            </div>
 
       {/*  Unsaved changes banner  */}
       <div id="unsaved-banner" className="unsaved-banner">
@@ -160,36 +164,15 @@ export default function EditExam() {
         <div className="more-questions-dash">+ 199 câu hỏi nữa...</div>
       </div>
 
-      {/*  Actions  */}
       <div className="action-bar">
-        <button onClick={() => navigate('/exam-detail')} className="btn-cancel">← Hủy</button>
+        <button onClick={() => navigate('/teacher/exams/' + examId)} className="btn-cancel">← Hủy</button>
         <button onClick={() => console.log('Action triggered')} className="btn-save"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Lưu thay đổi</button>
       </div>
 
       </>
       )}
     </div>
-    {/*  Mobile Bottom Nav (Instructor)  */}
-    <nav className="mobile-bottom-nav">
-      <a className="mbn-item" onClick={() => console.log('Action triggered')}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        Dashboard
-      </a>
-      <a className="mbn-item active" onClick={() => navigate('/exam-list')}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg>
-        Bài thi
-      </a>
-      <a className="mbn-item" onClick={() => navigate('/create-exam')}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        Tạo mới
-      </a>
-      <a className="mbn-item" onClick={() => console.log('Action triggered')}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Hồ sơ
-      </a>
-    </nav>
   </div>
-</div>
 
 
     </>

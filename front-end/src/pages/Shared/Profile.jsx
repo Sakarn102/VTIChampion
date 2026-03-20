@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import userApi from '../../api/userApi';
+import { useAuth } from '../../context/AuthContext';
 import { message, Button, Modal, Form, Input, Upload } from 'antd';
 import { UploadOutlined, EditOutlined } from '@ant-design/icons';
+import userApi from '../../api/userApi';
 
 export default function Profile() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const { user, refreshUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -16,9 +17,10 @@ export default function Profile() {
     try {
       setLoading(true);
       const data = await userApi.getProfile();
-      setUser(data.data || data);
+      const userData = data.data || data;
+      refreshUser(userData);
     } catch (error) {
-      message.error("Lỗi khi tải thông tin cá nhân");
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -84,7 +86,7 @@ export default function Profile() {
   };
 
   return (
-    <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto', minHeight: 'calc(100vh - 64px)' }}>
+    <div style={{ padding: '20px 15px', maxWidth: '800px', margin: '0 auto', minHeight: 'calc(100vh - 64px)' }}>
       <button 
         onClick={() => navigate(-1)} 
         style={{ marginBottom: '20px', cursor: 'pointer', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--blue-200, #bfdbfe)', background: 'var(--blue-50, #eff6ff)', color: 'var(--blue-600, #2563eb)', fontWeight: 'bold' }}>
@@ -133,7 +135,7 @@ export default function Profile() {
                   <span style={{ fontSize: '13px', color: 'var(--gray-400, #94a3b8)', fontWeight: '700', textTransform: 'uppercase' }}>Vai trò</span>
                   <div style={{ fontSize: '15px', color: 'var(--gray-800, #1e293b)', fontWeight: '600' }}>
                     <span style={{ background: '#dcfce7', color: '#16a34a', padding: '4px 12px', borderRadius: '20px', fontSize: '13px' }}>
-                      {user.role?.name ? user.role.name.replace('ROLE_', '') : 'Học viên'}
+                      {user.role === 'ADMIN' ? 'Quản trị viên' : user.role === 'TEACHER' ? 'Giảng viên' : 'Học viên'}
                     </span>
                   </div>
                 </div>

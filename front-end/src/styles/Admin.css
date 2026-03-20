@@ -390,3 +390,105 @@
   color: var(--blue-600, #2563eb);
   background: var(--blue-50, #eff6ff);
 }
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 1024px) {
+  .admin-sidebar {
+    transform: translateX(-100%);
+    width: 240px;
+  }
+  
+  .admin-sidebar.mobile-open {
+    transform: translateX(0);
+    box-shadow: 20px 0 50px rgba(0,0,0,0.1);
+  }
+  
+  .admin-main {
+    margin-left: 0;
+  }
+  
+  .admin-header {
+    padding: 0 16px;
+  }
+  
+  .admin-header-search {
+    display: none; /* Hide search on mobile header to save space */
+  }
+  
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .admin-dashboard-row {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-content-area {
+    padding: 20px 16px;
+  }
+  
+  .admin-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-header-right {
+    gap: 12px;
+  }
+  
+  .admin-notification {
+    display: none; /* Hide notification on very small screens */
+  }
+  
+  .admin-page-title {
+    font-size: 20px;
+  }
+
+  /* Table responsiveness */
+  .admin-table .ant-table {
+    overflow-x: auto;
+  }
+  
+  .admin-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+}
+
+/* Mobile Toggle Hamburger */
+.mobile-header-toggle {
+  display: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--gray-800);
+  margin-right: 12px;
+}
+
+@media (max-width: 1024px) {
+  .mobile-header-toggle {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.admin-sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(2px);
+  z-index: 95;
+}
+
+@media (max-width: 1024px) {
+  .admin-sidebar-overlay.active {
+    display: block;
+  }
+}

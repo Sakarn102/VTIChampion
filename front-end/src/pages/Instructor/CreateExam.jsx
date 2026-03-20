@@ -9,44 +9,21 @@ export default function CreateExam() {
 
   return (
     <>
-<div className="screen active" id="create-exam">
-  <div className="home-screen">
-    <div className="app-header">
-      <div className="app-logo">
-        <div className="logo-dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
-        <span className="logo-text">MCQ Training</span>
-      </div>
-      <nav className="app-nav">
-        <a onClick={() => console.log('Action triggered')} className="cursor-pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Dashboard</a>
-        <a className="active cursor-pointer" onClick={() => navigate('/exam-list')}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg> Quản lý Exam</a>
-        <a onClick={() => console.log('Action triggered')} className="cursor-pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Học viên</a>
-        <a onClick={() => console.log('Action triggered')} className="cursor-pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Báo cáo</a>
-      </nav>
-      <div className="header-right">
-        <div className="instructor-header-profile">
-          <div className="instructor-avatar-mini">T</div>
-          <div>
-            <div className="instructor-profile-name">Trung Hiện</div>
-            <div className="instructor-profile-role">Instructor</div>
-          </div>
+    <div className="create-exam-container" style={{ padding: 0 }}>
+      <div className="home-content" style={{ maxWidth: '860px', padding: 0 }}>
+
+        {/*  Breadcrumb  */}
+        <div className="breadcrumb" style={{ marginTop: 0 }}>
+          <a onClick={() => navigate('/teacher/exams')}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg> Danh sách bài thi</a>
+          <span>›</span>
+          <span className="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tạo bài thi mới</span>
         </div>
-      </div>
-    </div>
 
-    <div className="home-content" style={{ maxWidth: '860px' }}>
-
-      {/*  Breadcrumb  */}
-      <div className="breadcrumb">
-        <a onClick={() => navigate('/exam-list')}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg> Danh sách bài thi</a>
-        <span>›</span>
-        <span className="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tạo bài thi mới</span>
-      </div>
-
-      {/*  Page title  */}
-      <div className="create-exam-header-meta">
-        <h2 className="create-exam-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tạo bài thi mới</h2>
-        <p className="create-exam-subtitle">Điền đầy đủ thông tin bên dưới để tạo bài thi cho học viên</p>
-      </div>
+        {/*  Page title  */}
+        <div className="create-exam-header-meta">
+          <h2 className="create-exam-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tạo bài thi mới</h2>
+          <p className="create-exam-subtitle">Điền đầy đủ thông tin bên dưới để tạo bài thi cho học viên</p>
+        </div>
 
       {/*  FORM CARD: Basic Info  */}
       <div className="form-card">
@@ -268,9 +245,8 @@ export default function CreateExam() {
         </button>
       </div>
 
+      </div>
     </div>
-  </div>
-</div>
 
 {/*  Success Toast  */}
 <div id="toast" className="success-toast-fixed">

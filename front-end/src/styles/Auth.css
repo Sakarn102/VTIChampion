@@ -109,3 +109,40 @@
   color: #2563eb;
   font-weight: 600;
 }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .login-container {
+        height: auto;
+        padding: 40px 0;
+    }
+
+    .login-content {
+        flex-direction: column;
+        height: auto;
+        width: 90%;
+        max-width: 450px;
+    }
+
+    .login-brand-section {
+        padding: 30px;
+        min-height: 180px;
+    }
+
+    .brand-title {
+        font-size: 24px;
+        margin: 10px 0 5px;
+    }
+
+    .brand-features {
+        display: none;
+    }
+
+    .login-form-section {
+        padding: 30px;
+    }
+
+    .form-header h2 {
+        font-size: 22px;
+    }
+}

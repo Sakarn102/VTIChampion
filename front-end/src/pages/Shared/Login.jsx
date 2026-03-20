@@ -1,35 +1,55 @@
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/Auth.css";
-import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 import authApi from "../../api/auth/authApi";
+import userApi from "../../api/userApi";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { Form, Input, Button, Checkbox, message } from "antd";
+import { Form, Input, Button, Checkbox, message, Divider } from "antd";
+import "../../styles/Auth.css";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const onLogin = async (values) => {
     setLoading(true);
     try {
-      // 1. Gọi API login với tài khoản mới (test3@gmail.com)
       const res = await authApi.login(values);
-
       if (res && res.accessToken) {
-        // 2. Lưu token vào LocalStorage để các trang khác dùng
+        // Lưu token tạm để fetch profile
         localStorage.setItem("token", res.accessToken);
-        message.success("Đăng nhập thành công");
-
-        // 3. Nhảy sang trang Home
-        navigate("/home");
-      } else {
-        message.error("Đăng nhập thành công nhưng không thấy Token!");
+        
+        // Lấy profile thật từ DB để biết chính xác Role
+        const profileRes = await userApi.getProfile();
+        const userData = profileRes.data || profileRes;
+        
+        // Save to AuthContext - Login now handles role normalization
+        login(userData, res.accessToken);
+        
+        message.success("Đăng nhập thành công!");
+        navigate("/"); // HomeRedirect sẽ lo phần còn lại
       }
     } catch (err) {
-      message.error(err || "Tài khoản hoặc mật khẩu không chính xác!");
+      console.error(err);
+      message.error(typeof err === 'string' ? err : "Đăng nhập thất bại!");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleMockLogin = (role) => {
+    const mockUser = {
+      id: 99,
+      username: `mock_${role.toLowerCase()}`,
+      fullname: `Mock ${role}`,
+      email: `${role.toLowerCase()}@test.com`,
+      role: role,
+      avatarUrl: null
+    };
+    login(mockUser, "mock-token-xyz");
+    message.info(`Mock login as ${role}`);
+    navigate("/");
   };
 
   return (
@@ -108,8 +128,15 @@ export default function Login() {
             </Button>
 
             <div className="register-link">
-              Chưa có tài khoản?{" "}
               <a onClick={() => navigate("/register")}>Đăng ký ngay</a>
+            </div>
+
+            <Divider style={{ margin: '20px 0' }}>Hoặc Đăng nhập nhanh (Mock)</Divider>
+            
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+              <Button size="small" onClick={() => handleMockLogin('ADMIN')}>Admin</Button>
+              <Button size="small" onClick={() => handleMockLogin('TEACHER')}>Teacher</Button>
+              <Button size="small" onClick={() => handleMockLogin('STUDENT')}>Student</Button>
             </div>
           </Form>
         </div>

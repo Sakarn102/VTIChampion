@@ -1,24 +1,22 @@
 import React from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { 
-  AppstoreOutlined, 
-  UserOutlined, 
-  TeamOutlined, 
   FileTextOutlined, 
+  PlusCircleOutlined, 
   QuestionCircleOutlined,
-  BarChartOutlined,
-  SettingOutlined,
   BellOutlined, 
   SearchOutlined,
-  LayoutOutlined,
   MenuOutlined,
-  CloseOutlined
+  CloseOutlined,
+  AppstoreOutlined,
+  TeamOutlined,
+  BarChartOutlined
 } from '@ant-design/icons';
-import { useAuth } from '../../context/AuthContext';
-import ProfileDropdown from '../../components/ProfileDropdown';
-import '../../styles/Admin.css';
+import { useAuth } from '../context/AuthContext';
+import ProfileDropdown from '../components/ProfileDropdown';
+import '../styles/Admin.css'; // SỬ DỤNG LẠI STYLE ADMIN CHO NHANH
 
-const AdminLayout = () => {
+const TeacherLayout = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -29,14 +27,11 @@ const AdminLayout = () => {
   }, [navigate]);
   
   const menuItems = [
-    { path: '/admin/dashboard', icon: <AppstoreOutlined />, label: 'Dashboard' },
-    { path: '/admin/users', icon: <UserOutlined />, label: 'Users' },
-    { path: '/admin/classes', icon: <TeamOutlined />, label: 'Classes' },
-    { path: '/admin/exams', icon: <FileTextOutlined />, label: 'Exams' },
-    { path: '/admin/questions', icon: <QuestionCircleOutlined />, label: 'Questions' },
-    { path: '/admin/results', icon: <BarChartOutlined />, label: 'Results' },
-    { path: '/admin/reports', icon: <LayoutOutlined />, label: 'Reports' },
-    { path: '/admin/settings', icon: <SettingOutlined />, label: 'Settings' },
+    { path: '/teacher/dashboard', icon: <AppstoreOutlined />, label: 'Dashboard' },
+    { path: '/teacher/exams', icon: <FileTextOutlined />, label: 'Quản lý Đề thi' },
+    { path: '/teacher/students', icon: <TeamOutlined />, label: 'Học viên' },
+    { path: '/teacher/reports', icon: <BarChartOutlined />, label: 'Báo cáo' },
+    { path: '/teacher/questions', icon: <QuestionCircleOutlined />, label: 'Ngân hàng Câu hỏi' },
   ];
 
   return (
@@ -47,13 +42,12 @@ const AdminLayout = () => {
         onClick={() => setMobileOpen(false)}
       />
 
-      {/* Sidebar */}
-      <aside className={`admin-sidebar ${mobileOpen ? 'mobile-open' : ''}`}>
+      <aside className={`admin-sidebar ${mobileOpen ? 'mobile-open' : ''}`} style={{borderColor: '#fbbf24'}}>
         <div className="admin-logo">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }} onClick={() => navigate('/admin/dashboard')}>
-              <div className="logo-icon">M</div>
-              <span className="logo-text">MCQ Admin</span>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div className="logo-icon" style={{background: '#ca8a04'}}>T</div>
+              <span className="logo-text">Teacher Workspace</span>
             </div>
             <CloseOutlined 
               className="mobile-header-toggle" 
@@ -77,7 +71,6 @@ const AdminLayout = () => {
         </nav>
       </aside>
 
-      {/* Main Content */}
       <main className="admin-main">
         <header className="admin-header">
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -86,25 +79,21 @@ const AdminLayout = () => {
                onClick={() => setMobileOpen(true)} 
             />
             <div className="admin-header-search">
-              <SearchOutlined />
-              <input type="text" placeholder="Tìm kiếm trang, người dùng, bài thi..." />
+               <SearchOutlined />
+               <input type="text" placeholder="Tìm đề thi, câu hỏi..." />
             </div>
           </div>
           
           <div className="admin-header-right">
-            <div className="admin-notification" onClick={() => navigate('/admin/notifications')}>
+            <div className="admin-notification" onClick={() => navigate('/teacher/notifications')}>
               <BellOutlined style={{ fontSize: '20px' }} />
-              <span className="badge">12</span>
+              <span className="badge">5</span>
             </div>
             
             <ProfileDropdown>
-              <div className="user-avatar" style={{ border: '2px solid var(--blue-100)', borderRadius: '12px', overflow: 'hidden' }}>
-                {user?.avatarUrl ? (
-                  <img src={`http://localhost:8080/api/v1/files/${user.avatarUrl}`} alt="Admin" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.onerror = null; e.target.src = user.avatarUrl; }} />
-                ) : (
-                  user?.fullname?.charAt(0) || user?.username?.charAt(0) || 'A'
-                )}
-              </div>
+               <div className="user-avatar" style={{ border: '2px solid #fde68a' }}>
+                 {user?.fullname?.charAt(0) || 'T'}
+               </div>
             </ProfileDropdown>
           </div>
         </header>
@@ -117,4 +106,4 @@ const AdminLayout = () => {
   );
 };
 
-export default AdminLayout;
+export default TeacherLayout;

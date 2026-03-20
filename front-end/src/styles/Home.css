@@ -521,6 +521,7 @@
   .stat-box {
     padding: 10px 14px;
     min-width: 70px;
+    backdrop-filter: none;
   }
   
   .stat-box .num { font-size: 18px; }
@@ -556,6 +557,10 @@
   
   .announce-btn {
     display: none;
+  }
+
+  .mobile-hide {
+    display: none !important;
   }
 }
 
