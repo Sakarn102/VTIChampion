@@ -8,6 +8,8 @@ import com.vti.vti_champion.entity.User;
 import com.vti.vti_champion.service.classes.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -73,24 +75,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllUsers(org.springframework.data.domain.Pageable pageable) {
-        org.springframework.data.domain.Page<UserResponse> responses = userService.getAllUsers(pageable).map(user -> {
-            UserResponse res = new UserResponse();
-            res.setId(user.getId());
-            res.setUsername(user.getUsername());
-            res.setEmail(user.getEmail());
-            res.setFullname(user.getFullname());
-            res.setAvatarUrl(user.getAvatarUrl());
-            res.setIsActive(user.getIsActive());
-            
-            SettingResponse role = new SettingResponse();
-            if (user.getRole() != null) {
-                role.setName(user.getRole().getName());
-            }
-            res.setRole(role);
-            return res;
-        });
-        return ResponseEntity.ok(responses);
+    public ResponseEntity<Page<UserResponse>> getAllUsers(Pageable pageable) {
+        return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
 
 }

@@ -3,6 +3,7 @@ package com.vti.vti_champion.service.classes;
 import com.vti.vti_champion.configuration.CloudinaryService;
 import com.vti.vti_champion.dto.request.RegisterRequest;
 import com.vti.vti_champion.dto.request.UpdateUserRequest;
+import com.vti.vti_champion.dto.response.UserResponse;
 import com.vti.vti_champion.entity.Setting;
 import com.vti.vti_champion.entity.User;
 import com.vti.vti_champion.repository.SettingRepository;
@@ -11,7 +12,8 @@ import com.vti.vti_champion.service.interfaces.IUserService;
 import com.vti.vti_champion.utils.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -134,7 +136,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public org.springframework.data.domain.Page<User> getAllUsers(org.springframework.data.domain.Pageable pageable) {
-        return userRepository.findAll(pageable);
+    public Page<UserResponse> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(user -> modelMapper.map(user, UserResponse.class));
     }
 }
