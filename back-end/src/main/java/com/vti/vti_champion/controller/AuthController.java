@@ -3,6 +3,7 @@ package com.vti.vti_champion.controller;
 import com.vti.vti_champion.dto.request.LoginRequest;
 import com.vti.vti_champion.dto.request.OtpRequest;
 import com.vti.vti_champion.dto.request.RegisterRequest;
+import com.vti.vti_champion.dto.request.ResetPasswordRequest;
 import com.vti.vti_champion.entity.User;
 import com.vti.vti_champion.service.classes.OtpService;
 import com.vti.vti_champion.service.classes.RegisterCheckService;
@@ -87,6 +88,12 @@ public class AuthController {
         return ResponseEntity.badRequest().body(Map.of(
                 "message", "Account not found!"
         ));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        userService.resetPassword(request.getEmail(), request.getCode(), request.getNewPassword());
+        return ResponseEntity.ok().build();
     }
 
 }

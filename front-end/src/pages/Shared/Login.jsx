@@ -9,24 +9,37 @@ export default function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const onLogin = async (values) => {
+  const handleLogin = async (values) => {
     setLoading(true);
     try {
-      // 1. Gọi API login với tài khoản mới (test3@gmail.com)
+      // values sẽ bao gồm: usernameOrEmail, password và rememberMe (do name="rememberMe")
       const res = await authApi.login(values);
+      const token = res.accessToken || res.data?.token || res.token;
 
-      if (res && res.accessToken) {
-        // 2. Lưu token vào LocalStorage để các trang khác dùng
-        localStorage.setItem("token", res.accessToken);
+      if (token) {
+        // Xóa các token cũ để tránh xung đột
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
+
+        if (values.rememberMe) {
+          // Nếu tích vào "Ghi nhớ": Lưu vào LocalStorage
+          localStorage.setItem("token", token);
+        } else {
+          // Nếu không tích: Lưu vào SessionStorage (tắt tab là mất)
+          sessionStorage.setItem("token", token);
+        }
+
         message.success("Đăng nhập thành công");
-
-        // 3. Nhảy sang trang Home
         navigate("/home");
       } else {
         message.error("Đăng nhập thành công nhưng không thấy Token!");
       }
     } catch (err) {
-      message.error(err || "Tài khoản hoặc mật khẩu không chính xác!");
+      // Xử lý hiển thị lỗi từ backend nếu có
+      const errorMsg =
+        err.response?.data?.message ||
+        "Tài khoản hoặc mật khẩu không chính xác!";
+      message.error(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -61,7 +74,7 @@ export default function Login() {
           </div>
 
           <Form
-            onFinish={onLogin}
+            onFinish={handleLogin}
             layout="vertical"
             className="modern-form"
             size="large"
@@ -81,19 +94,32 @@ export default function Login() {
               label={
                 <div className="password-label">
                   <span>Mật khẩu</span>
-                  <a href="/forgot">Quên mật khẩu?</a>
                 </div>
               }
               name="password"
               rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+              style={{ marginBottom: "4px" }}
             >
               <Input.Password
                 prefix={<LockOutlined className="input-icon" />}
-                placeholder="••••••••"
+                placeholder="************"
               />
             </Form.Item>
 
-            <Form.Item name="rememberMe" valuePropName="checked">
+            <div style={{ textAlign: "right" }}>
+              <a
+                href="/forgot-password"
+                style={{ fontSize: "13px", color: "#1890ff" }}
+              >
+                Quên mật khẩu?
+              </a>
+            </div>
+
+            <Form.Item
+              name="rememberMe"
+              valuePropName="checked"
+              style={{ marginBottom: "20px" }}
+            >
               <Checkbox>Ghi nhớ đăng nhập</Checkbox>
             </Form.Item>
 

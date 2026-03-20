@@ -4,17 +4,10 @@ import "../../styles/Home.css";
 import { useEffect } from "react";
 import { message } from "antd";
 import ProfileDropdown from "../../components/ProfileDropdown";
+import userApi from "../../api/userApi";
 
 export default function Home() {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      message.error("Bạn cần đăng nhập trước!");
-      navigate("/login");
-    }
-  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token"); // Xóa token khi đăng xuất

@@ -2,20 +2,27 @@ package com.vti.vti_champion.service.classes;
 
 import com.vti.vti_champion.configuration.CloudinaryService;
 import com.vti.vti_champion.dto.request.RegisterRequest;
+import com.vti.vti_champion.dto.request.ResetPasswordRequest;
 import com.vti.vti_champion.dto.request.UpdateUserRequest;
+import com.vti.vti_champion.dto.response.UserResponse;
+import com.vti.vti_champion.entity.Otp;
 import com.vti.vti_champion.entity.Setting;
 import com.vti.vti_champion.entity.User;
+import com.vti.vti_champion.repository.OtpRepository;
 import com.vti.vti_champion.repository.SettingRepository;
 import com.vti.vti_champion.repository.UserRepository;
 import com.vti.vti_champion.service.interfaces.IUserService;
 import com.vti.vti_champion.utils.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +33,7 @@ public class UserService implements IUserService {
     private final SettingRepository settingRepository;
     private final CloudinaryService cloudinaryService;
     private final OtpService otpService;
+    private final OtpRepository otpRepository;
 
     private static final String DEFAULT_AVATAR = "https://i.pinimg.com/736x/21/91/6e/21916e491ef0d796398f5724c313bbe7.jpg";
 
@@ -134,7 +142,24 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public org.springframework.data.domain.Page<User> getAllUsers(org.springframework.data.domain.Pageable pageable) {
-        return userRepository.findAll(pageable);
+    public Page<UserResponse> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(user -> modelMapper.map(user, UserResponse.class));
+    }
+
+    @Override
+    public void resetPassword(String email, String code, String newPassword) {
+        Otp otp = otpRepository.findTopByEmailOrderByCreatedAtDesc(email).orElseThrow(() -> new RuntimeException("Otp not found!"));
+        if (!passwordEncoder.matches(code, otp.getOtpHash())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        if (!PasswordUtil.isValidPassword(newPassword)) {
+            throw new RuntimeException("password.invalid");
+        }
+
+        User user = userRepository.findByEmail(otp.getEmail()).orElseThrow(() -> new RuntimeException("User not found!"));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 }

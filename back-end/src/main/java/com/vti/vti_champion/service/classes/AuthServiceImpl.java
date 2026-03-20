@@ -20,6 +20,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
 
@@ -34,20 +35,23 @@ public class AuthServiceImpl implements IAuthService {
     private final JwtService jwtService;
     private final IRefreshTokenService refreshTokenService;
     private final UserRepository userRepository;
-
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Map<String, Object> login(LoginRequest request, HttpServletResponse response) {
+            User user = userRepository.findByUsernameOrEmail(request.getUsernameOrEmail(), request.getUsernameOrEmail())
+                    .orElseThrow(() -> new RuntimeException("username_or_email.incorrect"));
 
-        try {
+            if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+                throw new BadCredentialsException("password.incorrect");
+            }
+
             // 1. Xác thực người dùng
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsernameOrEmail(), request.getPassword()));
 
             // 2. Lấy UserDetails và User Entity
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            User user = userRepository.findById(userDetails.getId())
-                    .orElseThrow(() -> new RuntimeException("User not found!"));
 
             // 3. Tạo Token
             String accessToken = jwtService.generateAccessToken(userDetails);
@@ -78,9 +82,6 @@ public class AuthServiceImpl implements IAuthService {
                     "accessToken", accessToken
             );
 
-        } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("password.incorrect");
-        }
     }
 
     @Override
