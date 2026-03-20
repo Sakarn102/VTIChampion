@@ -132,4 +132,9 @@ public class UserService implements IUserService {
     public boolean findUserByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    @Override
+    public org.springframework.data.domain.Page<User> getAllUsers(org.springframework.data.domain.Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
 }

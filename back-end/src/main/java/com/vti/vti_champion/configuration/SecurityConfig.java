@@ -36,14 +36,17 @@ public class SecurityConfig {
                 // Stateless
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // Authorization
+//                .authorizeHttpRequests(auth -> auth
+//                        // Những API công khai (không cần login)
+//                        .requestMatchers("/api/v1/auth/*").permitAll()
+//                        .requestMatchers("/api/v1/users/me").permitAll()
+//                        .requestMatchers("/api/v1/exams/create-exam").hasRole("Admin")
+//                        .requestMatchers("/error").permitAll()
+//                        .requestMatchers("/api/v1/auth/logout").authenticated() // Chỉ user đã login mới được logout
+//                        .anyRequest().authenticated()
+//                )
                 .authorizeHttpRequests(auth -> auth
-                        // Những API công khai (không cần login)
-                        .requestMatchers("/api/v1/auth/*").permitAll()
-                        .requestMatchers("/api/v1/users/me").permitAll()
-                        .requestMatchers("/api/v1/exams/create-exam").hasRole("Admin")
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers("/api/v1/auth/logout").authenticated() // Chỉ user đã login mới được logout
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 // UserDetailsService
                 .userDetailsService(userDetailsService)
