@@ -9,6 +9,8 @@ import Home from "../pages/Shared/Home";
 import Register from "../pages/Shared/Register";
 import VerifyOtp from "../pages/Shared/VerifyOtp";
 import Profile from "../pages/Shared/Profile";
+import ResetPassword from "../pages/Shared/ResetPassword";
+import ForgotPassword from "../pages/Shared/ForgotPassword";
 
 // Admin Pages
 import AdminLayout from "../pages/Admin/AdminLayout";
@@ -34,64 +36,143 @@ import ExamDetail from "../pages/Instructor/ExamDetail";
 const HomeRedirect = () => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
-  
-  if (user.role === 'ADMIN') return <Navigate to="/admin/dashboard" replace />;
-  if (user.role === 'TEACHER') return <Navigate to="/teacher/exams" replace />;
+
+  if (user.role === "ADMIN") return <Navigate to="/admin/dashboard" replace />;
+  if (user.role === "TEACHER") return <Navigate to="/teacher/exams" replace />;
   return <Navigate to="/home" replace />;
 };
 
 const AppRoutes = () => {
-    return (
-        <Routes>
-            {/* Public Routes - Guest Only */}
-            <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
-            <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
-            <Route path="/verify-otp" element={<GuestRoute><VerifyOtp /></GuestRoute>} />
+  return (
+    <Routes>
+      {/* Public Routes - Guest Only */}
+      <Route
+        path="/login"
+        element={
+          <GuestRoute>
+            <Login />
+          </GuestRoute>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <GuestRoute>
+            <Register />
+          </GuestRoute>
+        }
+      />
+      <Route
+        path="/verify-otp"
+        element={
+          <GuestRoute>
+            <VerifyOtp />
+          </GuestRoute>
+        }
+      />
 
-            {/* Root Redirect Logic */}
-            <Route path="/" element={<HomeRedirect />} />
+      <Route
+        path="/forgot-password"
+        element={
+          <GuestRoute>
+            <ForgotPassword />
+          </GuestRoute>
+        }
+      />
+      <Route
+        path="/reset-password"
+        element={
+          <GuestRoute>
+            <ResetPassword />
+          </GuestRoute>
+        }
+      />
 
-            {/* Admin Routes */}
-            <Route path="/admin" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminLayout /></ProtectedRoute>}>
-                <Route index element={<Navigate to="dashboard" replace />} />
-                <Route path="dashboard" element={<AdminDashboard />} />
-                <Route path="users" element={<UserManagement />} />
-                <Route path="classes" element={<ClassManagement />} />
-                <Route path="exams" element={<ExamManagement />} />
-                <Route path="questions" element={<QuestionManagement />} />
-                <Route path="results" element={<ResultsManagement />} />
-                <Route path="reports" element={<GenericAdminPage title="Báo cáo & Phân tích" />} />
-                <Route path="settings" element={<GenericAdminPage title="Cài đặt hệ thống" />} />
-                <Route path="notifications" element={<GenericAdminPage title="Quản lý Thông báo" />} />
-                <Route path="profile" element={<Profile />} />
-            </Route>
+      {/* Root Redirect Logic */}
+      <Route path="/" element={<HomeRedirect />} />
 
-            {/* Teacher Routes */}
-            <Route path="/teacher" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherLayout /></ProtectedRoute>}>
-                <Route index element={<Navigate to="dashboard" replace />} />
-                <Route path="dashboard" element={<GenericAdminPage title="Bảng điều khiển Giảng viên" />} />
-                <Route path="exams" element={<ExamList />} /> 
-                <Route path="exams/create" element={<CreateExam />} />
-                <Route path="exams/:examId" element={<ExamDetail />} />
-                <Route path="exams/:examId/edit" element={<EditExam />} />
-                <Route path="students" element={<GenericAdminPage title="Quản lý Học viên" />} />
-                <Route path="reports" element={<GenericAdminPage title="Báo cáo kết quả" />} />
-                <Route path="questions" element={<QuestionManagement />} />
-                <Route path="notifications" element={<GenericAdminPage title="Thông báo Giảng viên" />} />
-                <Route path="profile" element={<Profile />} />
-            </Route>
+      {/* Admin Routes */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute allowedRoles={["ADMIN"]}>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="users" element={<UserManagement />} />
+        <Route path="classes" element={<ClassManagement />} />
+        <Route path="exams" element={<ExamManagement />} />
+        <Route path="questions" element={<QuestionManagement />} />
+        <Route path="results" element={<ResultsManagement />} />
+        <Route
+          path="reports"
+          element={<GenericAdminPage title="Báo cáo & Phân tích" />}
+        />
+        <Route
+          path="settings"
+          element={<GenericAdminPage title="Cài đặt hệ thống" />}
+        />
+        <Route
+          path="notifications"
+          element={<GenericAdminPage title="Quản lý Thông báo" />}
+        />
+        <Route path="profile" element={<Profile />} />
+      </Route>
 
-            {/* Student Routes */}
-            <Route element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentLayout /></ProtectedRoute>}>
-                <Route path="/home" element={<Home />} />
-                <Route path="/results" element={<ResultsManagement />} />
-                <Route path="/profile" element={<Profile />} />
-            </Route>
+      {/* Teacher Routes */}
+      <Route
+        path="/teacher"
+        element={
+          <ProtectedRoute allowedRoles={["TEACHER"]}>
+            <TeacherLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route
+          path="dashboard"
+          element={<GenericAdminPage title="Bảng điều khiển Giảng viên" />}
+        />
+        <Route path="exams" element={<ExamList />} />
+        <Route path="exams/create" element={<CreateExam />} />
+        <Route path="exams/:examId" element={<ExamDetail />} />
+        <Route path="exams/:examId/edit" element={<EditExam />} />
+        <Route
+          path="students"
+          element={<GenericAdminPage title="Quản lý Học viên" />}
+        />
+        <Route
+          path="reports"
+          element={<GenericAdminPage title="Báo cáo kết quả" />}
+        />
+        <Route path="questions" element={<QuestionManagement />} />
+        <Route
+          path="notifications"
+          element={<GenericAdminPage title="Thông báo Giảng viên" />}
+        />
+        <Route path="profile" element={<Profile />} />
+      </Route>
 
-            {/* 404 Catch-all */}
-            <Route path="*" element={<HomeRedirect />} />
-        </Routes>
-    );
+      {/* Student Routes */}
+      <Route
+        element={
+          <ProtectedRoute allowedRoles={["STUDENT"]}>
+            <StudentLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/home" element={<Home />} />
+        <Route path="/results" element={<ResultsManagement />} />
+        <Route path="/profile" element={<Profile />} />
+      </Route>
+
+      {/* 404 Catch-all */}
+      <Route path="*" element={<HomeRedirect />} />
+    </Routes>
+  );
 };
 
 export default AppRoutes;
