@@ -35,6 +35,8 @@ public class UserController {
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
+        User user = userService.findById(userDetails.getId());
+
         UserResponse userResponse = new UserResponse();
         userResponse.setId(userDetails.getId());
         userResponse.setUsername(userDetails.getUsername());
@@ -43,8 +45,7 @@ public class UserController {
         userResponse.setAvatarUrl(userDetails.getAvatarUrl());
 
         SettingResponse settingResponse = new SettingResponse();
-        settingResponse.setName(userDetails.getAuthorities().iterator().next().getAuthority());
-
+        settingResponse.setName(user.getRole().getName().toString());
         userResponse.setRole(settingResponse);
 
         return  ResponseEntity.ok(Map.of(

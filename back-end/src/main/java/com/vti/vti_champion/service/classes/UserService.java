@@ -4,6 +4,7 @@ import com.vti.vti_champion.configuration.CloudinaryService;
 import com.vti.vti_champion.dto.request.RegisterRequest;
 import com.vti.vti_champion.dto.request.ResetPasswordRequest;
 import com.vti.vti_champion.dto.request.UpdateUserRequest;
+import com.vti.vti_champion.dto.response.SettingResponse;
 import com.vti.vti_champion.dto.response.UserResponse;
 import com.vti.vti_champion.entity.Otp;
 import com.vti.vti_champion.entity.Setting;
@@ -143,8 +144,19 @@ public class UserService implements IUserService {
 
     @Override
     public Page<UserResponse> getAllUsers(Pageable pageable) {
-        return userRepository.findAll(pageable)
-                .map(user -> modelMapper.map(user, UserResponse.class));
+        return userRepository.findAll(pageable).map(user -> {
+            UserResponse response = modelMapper.map(user, UserResponse.class);
+
+            response.setAvatarUrl(user.getAvatarUrl());
+
+            if (user.getRole() != null) {
+                SettingResponse role = new SettingResponse();
+                role.setName(user.getRole().getName().toString());
+                response.setRole(role);
+            }
+
+            return response;
+        });
     }
 
     @Override
@@ -161,5 +173,11 @@ public class UserService implements IUserService {
         User user = userRepository.findByEmail(otp.getEmail()).orElseThrow(() -> new RuntimeException("User not found!"));
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
+    }
+
+    @Override
+    public User findById(Integer id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id " + id));
     }
 }
