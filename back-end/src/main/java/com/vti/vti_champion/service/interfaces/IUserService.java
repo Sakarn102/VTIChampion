@@ -15,4 +15,5 @@ public interface IUserService {
     boolean findUserByEmail(String email);
     Page<UserResponse> getAllUsers(org.springframework.data.domain.Pageable pageable);
     void resetPassword(String email, String code, String newPassword);
+    User findById(Integer id);
 }
