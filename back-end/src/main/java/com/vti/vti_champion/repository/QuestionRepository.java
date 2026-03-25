@@ -15,5 +15,5 @@ import java.util.Optional;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question,Integer> {
     List<Question> findByExamId(Integer examId);
-    Page<Question> findByCreatorId(Integer creatorId, Pageable pageable);
+    Page<Question> findByTeacherId(Integer creatorId, Pageable pageable);
 }

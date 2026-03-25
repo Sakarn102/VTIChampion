@@ -5,13 +5,12 @@ import com.vti.vti_champion.dto.request.RegisterRequest;
 import com.vti.vti_champion.dto.request.ResetPasswordRequest;
 import com.vti.vti_champion.dto.request.UpdateUserRequest;
 import com.vti.vti_champion.dto.response.SettingResponse;
+import com.vti.vti_champion.dto.response.StudentResponse;
 import com.vti.vti_champion.dto.response.UserResponse;
 import com.vti.vti_champion.entity.Otp;
 import com.vti.vti_champion.entity.Setting;
 import com.vti.vti_champion.entity.User;
-import com.vti.vti_champion.repository.OtpRepository;
-import com.vti.vti_champion.repository.SettingRepository;
-import com.vti.vti_champion.repository.UserRepository;
+import com.vti.vti_champion.repository.*;
 import com.vti.vti_champion.service.interfaces.IUserService;
 import com.vti.vti_champion.utils.PasswordUtil;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService {
@@ -35,6 +37,7 @@ public class UserService implements IUserService {
     private final CloudinaryService cloudinaryService;
     private final OtpService otpService;
     private final OtpRepository otpRepository;
+    private final ClassUserRepository classUserRepository;
 
     private static final String DEFAULT_AVATAR = "https://i.pinimg.com/736x/21/91/6e/21916e491ef0d796398f5724c313bbe7.jpg";
 
@@ -179,5 +182,15 @@ public class UserService implements IUserService {
     public User findById(Integer id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id " + id));
+    }
+
+    @Override
+    public List<StudentResponse> getStudentsByTeacher(Integer teacherId) {
+        List<User> students = classUserRepository.findAllStudentsByTeacherId(teacherId);
+
+        // Map sang List DTO
+        return students.stream()
+                .map(user -> modelMapper.map(user, StudentResponse.class))
+                .collect(Collectors.toList());
     }
 }

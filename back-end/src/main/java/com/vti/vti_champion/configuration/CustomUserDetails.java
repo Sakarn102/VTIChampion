@@ -32,7 +32,7 @@ public class CustomUserDetails implements UserDetails {
         this.avatarUrl = user.getAvatarUrl();
         this.password = user.getPassword();
         this.authorities = List.of(new SimpleGrantedAuthority(
-                "ROLE_" + user.getRole().getName().toUpperCase())
+                "ROLE_" + user.getRole().getName().toUpperCase().trim())
         );
     }
     @Override

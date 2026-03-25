@@ -41,8 +41,8 @@ public class Question {
     private Exam exam;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id")
-    private User creator;
+    @JoinColumn(name = "teacher_id")
+    private User teacher;
 
     // Quan hệ với Answer (Một câu hỏi có nhiều câu trả lời)
     // CascadeType.ALL: Khi lưu Question sẽ tự động lưu các Answer đi kèm

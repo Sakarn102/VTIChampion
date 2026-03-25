@@ -5,6 +5,7 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "`user`")
@@ -49,4 +50,7 @@ public class User {
     @Column(name = "enabled", nullable = false)
     private boolean enabled = false; //
 
+    // Nếu là Giảng viên: Lấy danh sách lớp đang dạy
+    @OneToMany(mappedBy = "teacher")
+    private List<Class> taughtClasses;
 }

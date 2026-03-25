@@ -27,11 +27,20 @@ public class Class {
     @Column(name = "thumbnail_url", columnDefinition = "TEXT")
     private String thumbnailUrl;
 
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
     @ManyToOne
-    @JoinColumn(name = "user_id") // Giảng viên chủ nhiệm/người tạo lớp
-    private User user;
+    @JoinColumn(name = "department_id")
+    private Setting department;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id") // Giảng viên chủ nhiệm/người tạo lớp
+    private User teacher;
 
     // Quan hệ với Exam: Một lớp có nhiều bài thi
     @OneToMany(mappedBy = "classRoom")
     private List<Exam> exams;
+
+
 }

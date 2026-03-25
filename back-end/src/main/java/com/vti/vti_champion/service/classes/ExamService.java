@@ -57,7 +57,7 @@ public class ExamService implements IExamService {
         Class classRoom = classRepository.findById(request.getClassId())
                 .orElseThrow(() -> new RuntimeException("Lớp học (Class Room) không tồn tại!"));
 
-        exam.setCreator(creator);
+        exam.setTeacher(creator);
         exam.setClassRoom(classRoom);
 
         List<Question> clonedQuestions = new ArrayList<>();
@@ -71,7 +71,7 @@ public class ExamService implements IExamService {
             Question cloneQuestion = new Question();
             cloneQuestion.setContent(originalQuestion.getContent());
             cloneQuestion.setDifficultyLevel(originalQuestion.getDifficultyLevel());
-            cloneQuestion.setCreator(originalQuestion.getCreator());
+            cloneQuestion.setTeacher(originalQuestion.getTeacher());
             cloneQuestion.setExplanation(originalQuestion.getExplanation());
             cloneQuestion.setExam(exam);
 
@@ -121,7 +121,7 @@ public class ExamService implements IExamService {
             ExamResponse response = modelMapper.map(exam, ExamResponse.class);
 
             if (exam.getClassRoom() != null) response.setClassName(exam.getClassRoom().getName());
-            if (exam.getCreator() != null) response.setCreatorName(exam.getCreator().getFullname());
+            if (exam.getTeacher() != null) response.setCreatorName(exam.getTeacher().getFullname());
 
             return response;
         });
@@ -153,7 +153,7 @@ public class ExamService implements IExamService {
             Question cloneQ = new Question();
             cloneQ.setContent(originalQuestion.getContent());
             cloneQ.setDifficultyLevel(originalQuestion.getDifficultyLevel());
-            cloneQ.setCreator(originalQuestion.getCreator());
+            cloneQ.setTeacher(originalQuestion.getTeacher());
             cloneQ.setExplanation(originalQuestion.getExplanation());
             cloneQ.setExam(exam); // Gắn vào Exam này
 

@@ -31,7 +31,7 @@ public class QuestionService implements IQuestionService {
 
     @Override
     public Page<QuestionResponse> getQuestionsByTeacher(Integer teacherId, Pageable pageable) {
-        Page<Question> questionPage = questionRepository.findByCreatorId(teacherId, pageable);
+        Page<Question> questionPage = questionRepository.findByTeacherId(teacherId, pageable);
 
         return questionPage.map(question -> {
             QuestionResponse response = modelMapper.map(question, QuestionResponse.class);
@@ -56,7 +56,7 @@ public class QuestionService implements IQuestionService {
         // 2. Map từ Request sang Entity Question
         Question question = new Question();
         question.setContent(request.getContent());
-        question.setCreator(creator);
+        question.setTeacher(creator);
         question.setDifficultyLevel(request.getDifficultyLevel());
         question.setExplanation(request.getExplanation());
 
@@ -91,7 +91,7 @@ public class QuestionService implements IQuestionService {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RuntimeException("Question not found"));
 
-        if (question.getCreator() == null || !question.getCreator().getId().equals(currentTeacherId)) {
+        if (question.getTeacher() == null || !question.getTeacher().getId().equals(currentTeacherId)) {
             throw new RuntimeException("Current teacher id not match");
         }
 
@@ -122,7 +122,7 @@ public class QuestionService implements IQuestionService {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RuntimeException("Question not found"));
 
-        if (question.getCreator() == null || !question.getCreator().getId().equals(currentTeacherId)) {
+        if (question.getTeacher() == null || !question.getTeacher().getId().equals(currentTeacherId)) {
             throw new RuntimeException("Current teacher id not match");
         }
 

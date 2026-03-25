@@ -37,8 +37,8 @@ public class Exam {
     private Type type;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id")
-    private User creator;
+    @JoinColumn(name = "teacher_id")
+    private User teacher;
 
     @ManyToOne
     @JoinColumn(name = "class_id")

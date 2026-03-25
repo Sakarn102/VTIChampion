@@ -3,6 +3,7 @@ package com.vti.vti_champion.controller;
 import com.vti.vti_champion.configuration.CustomUserDetails;
 import com.vti.vti_champion.dto.request.UpdateUserRequest;
 import com.vti.vti_champion.dto.response.SettingResponse;
+import com.vti.vti_champion.dto.response.StudentResponse;
 import com.vti.vti_champion.dto.response.UserResponse;
 import com.vti.vti_champion.entity.User;
 import com.vti.vti_champion.service.classes.UserService;
@@ -17,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -78,6 +80,20 @@ public class UserController {
     @GetMapping
     public ResponseEntity<Page<UserResponse>> getAllUsers(Pageable pageable) {
         return ResponseEntity.ok(userService.getAllUsers(pageable));
+    }
+
+    @GetMapping("/teacher/my-students")
+    public ResponseEntity<List<StudentResponse>> getStudentsByTeacher(Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Integer teacherId = userDetails.getId();
+
+        List<StudentResponse> students = userService.getStudentsByTeacher(teacherId);
+
+        if (students.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(students, HttpStatus.OK);
     }
 
 }

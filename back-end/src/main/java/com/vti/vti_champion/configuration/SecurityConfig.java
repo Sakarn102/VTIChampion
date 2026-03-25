@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,6 +25,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, UserDetailsService userDetailsService, JwtFilter jwtFilter) throws Exception {
@@ -35,32 +38,15 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 // Stateless
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Authorization
-//                .authorizeHttpRequests(auth -> auth
-//                        // Những API công khai (không cần login)
-//                        .requestMatchers("/api/v1/auth/*").permitAll()
-//                        .requestMatchers("/api/v1/users/me").permitAll()
-//                        .requestMatchers("/api/v1/exams/create-exam").hasRole("Admin")
-//                        .requestMatchers("/error").permitAll()
-//                        .requestMatchers("/api/v1/auth/logout").authenticated() // Chỉ user đã login mới được logout
-//                        .anyRequest().authenticated()
-//                )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 // UserDetailsService
                 .userDetailsService(userDetailsService)
                 // JwtFilter
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.setCharacterEncoding("UTF-8");
-                            response.setContentType("application/json");
-                            response.getWriter().write("{\"message\": \"Bạn chưa có quyền vào đây!\"}");
-                        })
-                );
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
