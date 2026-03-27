@@ -5,9 +5,11 @@ import com.vti.vti_champion.dto.request.UpdateQuestionRequest;
 import com.vti.vti_champion.dto.response.AnswerResponse;
 import com.vti.vti_champion.dto.response.QuestionResponse;
 import com.vti.vti_champion.entity.Answer;
+import com.vti.vti_champion.entity.Exam;
 import com.vti.vti_champion.entity.Question;
 import com.vti.vti_champion.entity.User;
 import com.vti.vti_champion.repository.AnswerRepository;
+import com.vti.vti_champion.repository.ExamRepository;
 import com.vti.vti_champion.repository.QuestionRepository;
 import com.vti.vti_champion.repository.UserRepository;
 import com.vti.vti_champion.service.interfaces.IQuestionService;
@@ -27,7 +29,8 @@ public class QuestionService implements IQuestionService {
     private final QuestionRepository questionRepository;
     private final ModelMapper modelMapper;
     private final AnswerRepository answerRepository;
-    private final UserRepository  userRepository;
+    private final UserRepository userRepository;
+    private final ExamRepository examRepository;
 
     @Override
     public Page<QuestionResponse> getQuestionsByTeacher(Integer teacherId, Pageable pageable) {
@@ -59,6 +62,13 @@ public class QuestionService implements IQuestionService {
         question.setTeacher(creator);
         question.setDifficultyLevel(request.getDifficultyLevel());
         question.setExplanation(request.getExplanation());
+
+        // Gắn vào Exam nếu có examId
+        if (request.getExamId() != null) {
+            Exam exam = examRepository.findById(request.getExamId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy bài thi ID: " + request.getExamId()));
+            question.setExam(exam);
+        }
 
         // Lưu Question để lấy ID trước khi lưu Answer
         Question savedQuestion = questionRepository.save(question);

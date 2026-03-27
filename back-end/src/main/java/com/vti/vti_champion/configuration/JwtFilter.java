@@ -31,8 +31,14 @@ public class JwtFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         String token = null;
 
-        //  Lấy accessToken từ cookie
-        if (request.getCookies() != null) {
+        // 1. Ưu tiên đọc từ Authorization Header: "Bearer <token>"
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        }
+
+        // 2. Nếu không có header, fallback đọc từ Cookie 'accessToken'
+        if (token == null && request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("accessToken".equals(cookie.getName())) {
                     token = cookie.getValue();

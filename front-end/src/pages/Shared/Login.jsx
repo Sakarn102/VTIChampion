@@ -17,18 +17,21 @@ export default function Login() {
     try {
       const res = await authApi.login(values);
       if (res && res.accessToken) {
-        // Lưu token tạm để fetch profile
+        // Lưu token vào localStorage (cho axiosClient)
         localStorage.setItem("token", res.accessToken);
-        
+
+        // Đặt cookie 'accessToken' để JwtFilter (Spring Security) nhận được - Max-Age 100 năm
+        document.cookie = `accessToken=${res.accessToken}; path=/; SameSite=Lax;`;
+
         // Lấy profile thật từ DB để biết chính xác Role
         const profileRes = await userApi.getProfile();
         const userData = profileRes.data || profileRes;
-        
-        // Save to AuthContext - Login now handles role normalization
+
+        // Save to AuthContext
         login(userData, res.accessToken);
-        
+
         message.success("Đăng nhập thành công!");
-        navigate("/"); // HomeRedirect sẽ lo phần còn lại
+        navigate("/");
       }
     } catch (err) {
       console.error(err);

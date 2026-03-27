@@ -31,7 +31,7 @@ public class ExamController {
 
     @GetMapping("/getAll")
     public ResponseEntity<Page<ExamResponse>> getAllExams(
-            @RequestParam(required = false) String keyworld,
+            @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Integer classId,
             @RequestParam(required = false) Integer creatorId,
 
@@ -43,7 +43,7 @@ public class ExamController {
 
             Pageable pageable
     ) {
-        Page<ExamResponse> response = examService.getAllExams(keyworld, classId, creatorId, startDate, endDate, pageable);
+        Page<ExamResponse> response = examService.getAllExams(keyword, classId, creatorId, startDate, endDate, pageable);
         return ResponseEntity.ok(response);
     }
 

@@ -1,6 +1,7 @@
 jwt:
   secret: 1234567890abcdef1234567890abcdef
-  access-expiration: 900000
+  # 100 năm = 100 * 365 * 24 * 60 * 60 * 1000 = 3153600000000
+  access-expiration: 3153600000000
   refresh-expiration: 2592000000
 
 spring:

@@ -29,7 +29,7 @@ const TeacherLayout = () => {
   const menuItems = [
     { path: '/teacher/dashboard', icon: <AppstoreOutlined />, label: 'Dashboard' },
     { path: '/teacher/exams', icon: <FileTextOutlined />, label: 'Quản lý Đề thi' },
-    { path: '/teacher/students', icon: <TeamOutlined />, label: 'Học viên' },
+    { path: '/teacher/students', icon: <TeamOutlined />, label: 'Quản lý lớp học' },
     { path: '/teacher/reports', icon: <BarChartOutlined />, label: 'Báo cáo' },
     { path: '/teacher/questions', icon: <QuestionCircleOutlined />, label: 'Ngân hàng Câu hỏi' },
   ];

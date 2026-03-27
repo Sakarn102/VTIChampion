@@ -10,7 +10,7 @@ public class UpdateExamRequest {
     @NotNull(message = "Code không được để trống")
     private String code;
 
-    @NotBlank(message = "Title không được để trống") //@NotBlank chỉ dùng cho String
+    @NotBlank(message = "Title không được để trống") // @NotBlank chỉ dùng cho String
     @Size(max = 200)
     private String title;
 

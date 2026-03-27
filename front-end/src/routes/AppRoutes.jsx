@@ -31,6 +31,8 @@ import ExamList from "../pages/Instructor/ExamList";
 import CreateExam from "../pages/Instructor/CreateExam";
 import EditExam from "../pages/Instructor/EditExam";
 import ExamDetail from "../pages/Instructor/ExamDetail";
+import ExamQuestions from "../pages/Instructor/ExamQuestions";
+import ClassList from "../pages/Instructor/ClassList";
 
 // HomeRedirect để điều hướng user về đúng workspace
 const HomeRedirect = () => {
@@ -139,10 +141,11 @@ const AppRoutes = () => {
         <Route path="exams" element={<ExamList />} />
         <Route path="exams/create" element={<CreateExam />} />
         <Route path="exams/:examId" element={<ExamDetail />} />
+        <Route path="exams/:examId/questions" element={<ExamQuestions />} />
         <Route path="exams/:examId/edit" element={<EditExam />} />
         <Route
           path="students"
-          element={<GenericAdminPage title="Quản lý Học viên" />}
+          element={<ClassList />}
         />
         <Route
           path="reports"

@@ -18,6 +18,9 @@ public class CreateQuestionRequest {
     @NotBlank(message = "Explanation cannot be null!")
     private String explanation;
 
+    // Optional: link câu hỏi vào một bài thi cụ thể
+    private Integer examId;
+
     @NotEmpty(message = "Vui lòng tạo ít nhất 1 câu trả lời ")
     private List<AnswerRequest> answers;
 }
