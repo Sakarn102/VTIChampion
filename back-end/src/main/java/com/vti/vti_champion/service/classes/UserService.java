@@ -48,7 +48,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User register(RegisterRequest request) {
+    public User
+    register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new RuntimeException("Username already exists! ");
         }

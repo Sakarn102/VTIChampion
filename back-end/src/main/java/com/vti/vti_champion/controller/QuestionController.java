@@ -3,6 +3,7 @@ package com.vti.vti_champion.controller;
 import com.vti.vti_champion.configuration.CustomUserDetails;
 import com.vti.vti_champion.dto.request.CreateQuestionRequest;
 import com.vti.vti_champion.dto.request.UpdateQuestionRequest;
+import com.vti.vti_champion.dto.response.PracticeQuestionResponse;
 import com.vti.vti_champion.dto.response.QuestionResponse;
 import com.vti.vti_champion.entity.Question;
 import com.vti.vti_champion.service.classes.QuestionService;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -82,4 +84,12 @@ public class QuestionController {
 
         return ResponseEntity.ok(Map.of("messsage", "Xoa cau hoi thanh cong"));
     }
+
+    // API: Học viên ôn luyện
+    @GetMapping("/practice/exam/{examId}")
+    public ResponseEntity<List<PracticeQuestionResponse>> startPractice(@PathVariable Integer examId) {
+        List<PracticeQuestionResponse> responses = questionService.getPracticeExam(examId);
+        return ResponseEntity.ok(responses);
+    }
+
 }

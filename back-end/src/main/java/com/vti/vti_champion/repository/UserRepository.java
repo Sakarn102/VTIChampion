@@ -1,6 +1,8 @@
 package com.vti.vti_champion.repository;
 
+import com.vti.vti_champion.dto.response.AdminUserResponse;
 import com.vti.vti_champion.dto.response.UserResponse;
+import com.vti.vti_champion.entity.Setting;
 import com.vti.vti_champion.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,4 +24,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
 
+    @Query("select u from User u where u.role.name = :roleName")
+    Page<User> findByTeacher(@Param("roleName") String roleName, Pageable pageable);
 }

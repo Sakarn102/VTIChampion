@@ -31,6 +31,7 @@ public class ExamResultController {
         return ResponseEntity.ok(history);
     }
 
+    // Xem điểm số theo học viên
     @GetMapping("/teacher/student/{userId}")
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     public ResponseEntity<?> getScoresByStudent(@PathVariable Integer userId) {
@@ -38,6 +39,7 @@ public class ExamResultController {
         return ResponseEntity.ok(responses);
     }
 
+    // lấy danh sách điểm số theo đề thi
     @GetMapping("/teacher/exam/{examId}")
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     public ResponseEntity<?> getScoresByExam(@PathVariable Integer examId) {
@@ -45,6 +47,7 @@ public class ExamResultController {
         return ResponseEntity.ok(responses);
     }
 
+    // lấy danh sách điểm cả lớp
     @GetMapping("/teacher/class/{classId}")
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     public ResponseEntity<?> getResultsByClass(@PathVariable Integer classId) {

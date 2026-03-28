@@ -3,6 +3,7 @@ package com.vti.vti_champion.service.classes;
 import com.vti.vti_champion.dto.request.CreateQuestionRequest;
 import com.vti.vti_champion.dto.request.UpdateQuestionRequest;
 import com.vti.vti_champion.dto.response.AnswerResponse;
+import com.vti.vti_champion.dto.response.PracticeQuestionResponse;
 import com.vti.vti_champion.dto.response.QuestionResponse;
 import com.vti.vti_champion.entity.Answer;
 import com.vti.vti_champion.entity.Exam;
@@ -137,5 +138,14 @@ public class QuestionService implements IQuestionService {
         }
 
         questionRepository.delete(question);
+    }
+
+    @Override
+    public List<PracticeQuestionResponse> getPracticeExam(Integer examId) {
+        List<Question> questions = questionRepository.findByExamId(examId);
+        return questions.stream().map(q -> {
+            PracticeQuestionResponse response = modelMapper.map(q, PracticeQuestionResponse.class);
+            return response;
+        }).collect(Collectors.toList());
     }
 }

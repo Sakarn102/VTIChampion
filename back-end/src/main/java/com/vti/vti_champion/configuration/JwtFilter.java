@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
@@ -53,23 +54,26 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         try {
-
             String username = jwtService.extractUsername(token);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                UserDetails userDetails =
-                        customUserDetailsService.loadUserByUsername(username);
+                UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+
+                if (!userDetails.isEnabled()) {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.setContentType("application/json; charset=UTF-8");
+                    response.getWriter().write("{\"message\":\"Tài khoản của bạn đã bị khoá bởi ADMIN\"}");
+                    return; // Ngắt filter tại đây, không cho đi tiếp
+                }
 
                 if (jwtService.isTokenValid(token, userDetails)) {
-
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails,
                                     null,
                                     userDetails.getAuthorities()
                             );
-
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }

@@ -45,4 +45,11 @@ public class Class {
     @JsonIgnore
     private List<Exam> exams;
 
+    @ManyToMany
+    @JoinTable(
+            name = "class_user",
+            joinColumns = @JoinColumn(name = "class_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
+    private List<User> students;
 }
