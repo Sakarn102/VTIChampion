@@ -6,6 +6,9 @@ const userApi = {
   getProfile: () => {
     return axiosClient.get("/users/me"); 
   },
+  getStudentsByTeacher: () => {
+    return axiosClient.get("/users/teacher/my-students");
+  },
   updateProfile: (formData) => {
     return axiosClient.put("/users/me", formData, {
       headers: {

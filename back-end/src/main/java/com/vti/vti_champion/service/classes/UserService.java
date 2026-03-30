@@ -48,7 +48,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User register(RegisterRequest request) {
+    public User
+    register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new RuntimeException("Username already exists! ");
         }
@@ -164,7 +165,8 @@ public class UserService implements IUserService {
 
     @Override
     public void resetPassword(String email, String code, String newPassword) {
-        Otp otp = otpRepository.findTopByEmailOrderByCreatedAtDesc(email).orElseThrow(() -> new RuntimeException("Otp not found!"));
+        Otp otp = otpRepository.findTopByEmailOrderByCreatedAtDesc(email)
+                .orElseThrow(() -> new RuntimeException("Otp not found!"));
         if (!passwordEncoder.matches(code, otp.getOtpHash())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
@@ -173,7 +175,8 @@ public class UserService implements IUserService {
             throw new RuntimeException("password.invalid");
         }
 
-        User user = userRepository.findByEmail(otp.getEmail()).orElseThrow(() -> new RuntimeException("User not found!"));
+        User user = userRepository.findByEmail(otp.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found!"));
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }

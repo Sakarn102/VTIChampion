@@ -1,0 +1,74 @@
+.class-mgt-className-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.class-mgt-className-icon {
+  padding: 8px;
+  background: #eff6ff;
+  border-radius: 8px;
+  color: #2563eb;
+}
+
+.class-mgt-className-text {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.class-mgt-teacher-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.class-mgt-teacher-icon {
+  color: #64748b;
+}
+
+.class-mgt-students-tag {
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.class-mgt-status-ended {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.class-mgt-actions-wrap {
+  display: flex;
+  gap: 8px;
+}
+
+.class-mgt-icon-edit {
+  color: #3b82f6;
+}
+
+.class-mgt-search {
+  width: 350px;
+}
+
+.class-mgt-select {
+  width: 180px;
+}
+
+.class-mgt-modal-title {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.class-mgt-form {
+  margin-top: 20px;
+}
+
+.class-mgt-students-select {
+  width: 100%;
+}
+
+.class-mgt-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+}

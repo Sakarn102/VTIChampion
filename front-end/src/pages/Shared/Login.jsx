@@ -17,18 +17,29 @@ export default function Login() {
     try {
       const res = await authApi.login(values);
       if (res && res.accessToken) {
-        // Lưu token tạm để fetch profile
+        // Lưu token vào localStorage (cho axiosClient)
         localStorage.setItem("token", res.accessToken);
-        
+
+        // Đặt cookie 'accessToken' để JwtFilter (Spring Security) nhận được - Max-Age 100 năm
+        document.cookie = `accessToken=${res.accessToken}; path=/; SameSite=Lax;`;
+
         // Lấy profile thật từ DB để biết chính xác Role
         const profileRes = await userApi.getProfile();
         const userData = profileRes.data || profileRes;
-        
-        // Save to AuthContext - Login now handles role normalization
+
+        // Save to AuthContext
         login(userData, res.accessToken);
-        
+
         message.success("Đăng nhập thành công!");
-        navigate("/"); // HomeRedirect sẽ lo phần còn lại
+        
+        // Điều hướng trực tiếp dựa theo Role
+        if (userData.role === "TEACHER") {
+          navigate("/teacher/dashboard");
+        } else if (userData.role === "ADMIN") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/");
+        }
       }
     } catch (err) {
       console.error(err);
@@ -38,19 +49,6 @@ export default function Login() {
     }
   };
 
-  const handleMockLogin = (role) => {
-    const mockUser = {
-      id: 99,
-      username: `mock_${role.toLowerCase()}`,
-      fullname: `Mock ${role}`,
-      email: `${role.toLowerCase()}@test.com`,
-      role: role,
-      avatarUrl: null
-    };
-    login(mockUser, "mock-token-xyz");
-    message.info(`Mock login as ${role}`);
-    navigate("/");
-  };
 
   return (
     <div className="login-container">
@@ -144,13 +142,6 @@ export default function Login() {
               <a onClick={() => navigate("/register")}>Đăng ký ngay</a>
             </div>
 
-            <Divider style={{ margin: '20px 0' }}>Hoặc Đăng nhập nhanh (Mock)</Divider>
-            
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-              <Button size="small" onClick={() => handleMockLogin('ADMIN')}>Admin</Button>
-              <Button size="small" onClick={() => handleMockLogin('TEACHER')}>Teacher</Button>
-              <Button size="small" onClick={() => handleMockLogin('STUDENT')}>Student</Button>
-            </div>
           </Form>
         </div>
       </div>

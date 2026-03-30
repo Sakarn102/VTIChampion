@@ -31,9 +31,9 @@ public class ExamController {
 
     @GetMapping("/getAll")
     public ResponseEntity<Page<ExamResponse>> getAllExams(
-            @RequestParam(required = false) String keyworld,
+            @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Integer classId,
-            @RequestParam(required = false) Integer creatorId,
+            @RequestParam(name = "teacher_id", required = false) Integer teacherId,
 
             @RequestParam(required = false)
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
@@ -43,7 +43,7 @@ public class ExamController {
 
             Pageable pageable
     ) {
-        Page<ExamResponse> response = examService.getAllExams(keyworld, classId, creatorId, startDate, endDate, pageable);
+        Page<ExamResponse> response = examService.getAllExams(keyword, classId, teacherId, startDate, endDate, pageable);
         return ResponseEntity.ok(response);
     }
 
@@ -60,4 +60,5 @@ public class ExamController {
 
         return ResponseEntity.ok(Map.of("message", "Update Exam thành công!"));
     }
+
 }

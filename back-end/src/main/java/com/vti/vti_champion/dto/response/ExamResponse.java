@@ -23,6 +23,7 @@ public class ExamResponse {
 
     private String creatorName;
     private String className;
+    private Integer classId;
 
     private List<QuestionResponse> questions;
 

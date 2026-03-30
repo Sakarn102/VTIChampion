@@ -33,7 +33,7 @@ public class ExamSpecification {
     public static Specification<Exam> hasCreatorId(Integer creatorId) {
         return (root, query, cb) -> {
             if (creatorId == null) return null;
-            return cb.equal(root.get("creator").get("id"), creatorId);
+            return cb.equal(root.get("teacher").get("id"), creatorId);
         };
     }
 

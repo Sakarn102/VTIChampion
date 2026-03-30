@@ -30,7 +30,7 @@ const ExamManagement = () => {
   const [exams, setExams] = useState([]);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 5,
+    pageSize: 6,
     total: 0,
   });
 
@@ -98,18 +98,11 @@ const ExamManagement = () => {
       dataIndex: "title",
       key: "title",
       render: (text) => (
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div
-            style={{
-              padding: "8px",
-              background: "#fff7ed",
-              borderRadius: "8px",
-              color: "#ea580c",
-            }}
-          >
+        <div className="exam-mgt-title-wrap">
+          <div className="exam-mgt-title-icon">
             <FileTextOutlined />
           </div>
-          <span style={{ fontWeight: 700, color: "#1e293b" }}>{text}</span>
+          <span className="exam-mgt-title-text">{text}</span>
         </div>
       ),
     },
@@ -122,15 +115,15 @@ const ExamManagement = () => {
       title: "Thao tác",
       key: "actions",
       render: (_, record) => (
-        <div style={{ display: "flex", gap: "8px" }}>
+        <div className="exam-mgt-actions-wrap">
           <Button
             type="text"
-            icon={<EditOutlined style={{ color: "#3b82f6" }} />}
+            icon={<EditOutlined className="exam-mgt-icon-edit" />}
             title="Sửa"
           />
           <Button
             type="text"
-            icon={<ShareAltOutlined style={{ color: "#10b981" }} />}
+            icon={<ShareAltOutlined className="exam-mgt-icon-share" />}
             title="Gán cho lớp"
           />
           <Button
@@ -160,11 +153,11 @@ const ExamManagement = () => {
       <div className="admin-filter-bar">
         <Input.Search
           placeholder="Tìm kiếm tên đề thi..."
-          style={{ width: 350 }}
+          className="exam-mgt-search"
           size="large"
           onSearch={(v) => fetchExams({ keyword: v, page: 1 })}
         />
-        <Select defaultValue="ALL" size="large" style={{ width: 180 }}>
+        <Select defaultValue="ALL" size="large" className="exam-mgt-select">
           <Option value="ALL">Tất cả bài thi</Option>
         </Select>
       </div>
@@ -181,16 +174,12 @@ const ExamManagement = () => {
       </div>
 
       <Modal
-        title={
-          <span style={{ fontSize: "20px", fontWeight: 800 }}>
-            Thông tin đề thi mới
-          </span>
-        }
+        title={<span className="exam-mgt-modal-title">Thông tin đề thi mới</span>}
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={null}
       >
-        <Form layout="vertical" style={{ marginTop: "20px" }}>
+        <Form layout="vertical" className="exam-mgt-form">
           <Form.Item
             label="Tiêu đề bài thi"
             name="title"
@@ -198,19 +187,13 @@ const ExamManagement = () => {
           >
             <Input size="large" placeholder="Nhập tên đề thi" />
           </Form.Item>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "16px",
-            }}
-          >
+          <div className="exam-mgt-grid">
             <Form.Item
               label="Thời gian (phút)"
               name="duration"
               rules={[{ required: true }]}
             >
-              <InputNumber size="large" style={{ width: "100%" }} min={1} />
+              <InputNumber size="large" className="exam-mgt-input-number" min={1} />
             </Form.Item>
             <Form.Item
               label="Chuyên mục"
@@ -226,14 +209,7 @@ const ExamManagement = () => {
           <Form.Item label="Mô tả đề thi" name="description">
             <Input.TextArea rows={4} placeholder="Nhập mô tả ngắn gọn..." />
           </Form.Item>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              gap: "12px",
-              marginTop: "32px",
-            }}
-          >
+          <div className="exam-mgt-form-actions">
             <button
               type="button"
               className="admin-btn-outline"

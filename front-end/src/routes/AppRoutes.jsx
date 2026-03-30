@@ -31,6 +31,11 @@ import ExamList from "../pages/Instructor/ExamList";
 import CreateExam from "../pages/Instructor/CreateExam";
 import EditExam from "../pages/Instructor/EditExam";
 import ExamDetail from "../pages/Instructor/ExamDetail";
+import ExamQuestions from "../pages/Instructor/ExamQuestions";
+import ClassList from "../pages/Instructor/ClassList";
+import ClassDetail from "../pages/Instructor/ClassDetail";
+import TeacherDashboard from "../pages/Instructor/TeacherDashboard";
+import HelpCenter from "../pages/Instructor/HelpCenter";
 
 // HomeRedirect để điều hướng user về đúng workspace
 const HomeRedirect = () => {
@@ -38,7 +43,7 @@ const HomeRedirect = () => {
   if (!user) return <Navigate to="/login" replace />;
 
   if (user.role === "ADMIN") return <Navigate to="/admin/dashboard" replace />;
-  if (user.role === "TEACHER") return <Navigate to="/teacher/exams" replace />;
+  if (user.role === "TEACHER") return <Navigate to="/teacher/dashboard" replace />;
   return <Navigate to="/home" replace />;
 };
 
@@ -134,21 +139,22 @@ const AppRoutes = () => {
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route
           path="dashboard"
-          element={<GenericAdminPage title="Bảng điều khiển Giảng viên" />}
+          element={<TeacherDashboard />}
         />
         <Route path="exams" element={<ExamList />} />
         <Route path="exams/create" element={<CreateExam />} />
         <Route path="exams/:examId" element={<ExamDetail />} />
+        <Route path="exams/:examId/questions" element={<ExamQuestions />} />
         <Route path="exams/:examId/edit" element={<EditExam />} />
         <Route
           path="students"
-          element={<GenericAdminPage title="Quản lý Học viên" />}
+          element={<ClassList />}
         />
         <Route
-          path="reports"
-          element={<GenericAdminPage title="Báo cáo kết quả" />}
+          path="students/:classId"
+          element={<ClassDetail />}
         />
-        <Route path="questions" element={<QuestionManagement />} />
+        <Route path="help" element={<HelpCenter />} />
         <Route
           path="notifications"
           element={<GenericAdminPage title="Thông báo Giảng viên" />}

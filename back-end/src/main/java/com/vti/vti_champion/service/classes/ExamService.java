@@ -41,7 +41,6 @@ public class ExamService implements IExamService {
     ClassRepository classRepository;
     ModelMapper modelMapper;
 
-
     @Override
     public ExamResponse createExam(CreateExamRequest request) {
 
@@ -65,7 +64,8 @@ public class ExamService implements IExamService {
         for (Integer questionId : request.getQuestionIds()) {
             // 1. Lấy câu hỏi GỐC từ ngân hàng đề
             Question originalQuestion = questionRepository.findById(questionId)
-                    .orElseThrow(() -> new RuntimeException("Câu hỏi ID " + questionId + " không tồn tại trong ngân hàng đề!"));
+                    .orElseThrow(() -> new RuntimeException(
+                            "Câu hỏi ID " + questionId + " không tồn tại trong ngân hàng đề!"));
 
             // 2. TẠO BẢN SAO CÂU HỎI (New hoàn toàn)
             Question cloneQuestion = new Question();
@@ -105,23 +105,24 @@ public class ExamService implements IExamService {
 
     @Override
     public Page<ExamResponse> getAllExams(
-            String keyword, Integer classId, Integer creatorId,
-            LocalDate startDate, LocalDate endDate, Pageable pageable
-    ) {
+            String keyword, Integer classId, Integer teacherId,
+            LocalDate startDate, LocalDate endDate, Pageable pageable) {
 
         LocalDateTime start = (startDate != null) ? startDate.atStartOfDay() : null;
         LocalDateTime end = (endDate != null) ? endDate.atStartOfDay() : null;
 
         Specification<Exam> spec = Specification.where(ExamSpecification.hasKeyword(keyword))
                 .and(ExamSpecification.hasClassId(classId))
-                .and(ExamSpecification.hasCreatorId(creatorId))
+                .and(ExamSpecification.hasCreatorId(teacherId))
                 .and(ExamSpecification.createdBeetween(start, end));
 
         return examRepository.findAll(spec, pageable).map(exam -> {
             ExamResponse response = modelMapper.map(exam, ExamResponse.class);
 
-            if (exam.getClassRoom() != null) response.setClassName(exam.getClassRoom().getName());
-            if (exam.getTeacher() != null) response.setCreatorName(exam.getTeacher().getFullname());
+            if (exam.getClassRoom() != null)
+                response.setClassName(exam.getClassRoom().getName());
+            if (exam.getTeacher() != null)
+                response.setCreatorName(exam.getTeacher().getFullname());
 
             return response;
         });
@@ -185,7 +186,7 @@ public class ExamService implements IExamService {
         exam.getQuestions().addAll(clonedQuestions);
 
         // 6. LƯU LẠI
-//        examRepository.save(exam);
+        // examRepository.save(exam);
 
         ExamResponse response = modelMapper.map(exam, ExamResponse.class);
         response.setClassName(exam.getClassRoom().getName());
