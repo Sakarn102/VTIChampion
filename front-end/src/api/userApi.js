@@ -22,6 +22,11 @@ const userApi = {
   delete: (id) => {
     return axiosClient.delete(`/users/${id}`);
   },
+  toggleStatus: (id, isActive) => {
+    return axiosClient.patch(`/admin/status/${id}`, null, {
+      params: { active: isActive }
+    });
+  },
   update: (id, data) => {
     return axiosClient.put(`/users/${id}`, data);
   }

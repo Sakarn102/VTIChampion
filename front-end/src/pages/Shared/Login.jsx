@@ -38,7 +38,7 @@ export default function Login() {
         } else if (userData.role === "ADMIN") {
           navigate("/admin/dashboard");
         } else {
-          navigate("/");
+          navigate("/student/dashboard");
         }
       }
     } catch (err) {

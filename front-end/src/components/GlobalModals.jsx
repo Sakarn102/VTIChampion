@@ -88,37 +88,6 @@ export default function GlobalModals() {
 
 
 
-<div id="deactivate-modal" className="modal-overlay" style={{ zIndex: 3000 }}>
-  <div className="deactivate-modal-container">
-    {/*  Red top bar  */}
-    <div className="red-top-bar"></div>
-    <div className="deactivate-body">
-      {/*  Icon  */}
-      <div style={{ width: '60px', height: '60px', background: '#fee2e2', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', margin: '0 auto 16px' }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div>
-      <h3 style={{ fontFamily: '\'Poppins\',sans-serif', fontSize: '18px', fontWeight: '700', color: 'var(--gray-800)', textAlign: 'center', marginBottom: '8px' }}>Vô hiệu hóa bài thi?</h3>
-      <p style={{ fontSize: '13px', color: 'var(--gray-400)', textAlign: 'center', lineHeight: '1.7', marginBottom: '6px' }}>Bài thi <strong style={{ color: 'var(--gray-800)' }}>"TOEIC Full Test - Đề 01"</strong> sẽ bị ẩn khỏi danh sách và học viên không thể đăng ký mới.</p>
-      {/*  Warning box  */}
-      <div className="warning-box">
-        <span style={{ fontSize: '16px', flexShrink: '0' }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
-        <div>
-          <div style={{ fontSize: '12px', fontWeight: '800', color: '#c2410c', marginBottom: '3px' }}>Lưu ý quan trọng</div>
-          <div style={{ fontSize: '12px', color: '#9a3412', fontWeight: '600', lineHeight: '1.6' }}>128 học viên đang tham gia sẽ không bị ảnh hưởng. Dữ liệu kết quả vẫn được giữ nguyên. Bạn có thể kích hoạt lại bất cứ lúc nào.</div>
-        </div>
-      </div>
-      {/*  Confirm input  */}
-      <div style={{ marginBottom: '20px' }}>
-        <label className="form-label">Nhập <strong style={{ color: '#dc2626' }}>DEACTIVATE</strong> để xác nhận</label>
-        <input id="deactivate-confirm-input" type="text" placeholder="DEACTIVATE" className="input-deactivate-confirm" />
-      </div>
-      {/*  Buttons  */}
-      <div style={{ display: 'flex', gap: '10px' }}>
-        <button onClick={() => console.log('Action triggered')} className="btn-secondary" style={{ flex: 1 }}>Hủy bỏ</button>
-        <button id="deactivate-confirm-btn" disabled className="btn-confirm-deactivate"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="svg-icon" ><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> Vô hiệu hóa</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 
 
 

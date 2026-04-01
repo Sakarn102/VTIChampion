@@ -12,6 +12,7 @@ import Profile from "../pages/Shared/Profile";
 import ResetPassword from "../pages/Shared/ResetPassword";
 import ForgotPassword from "../pages/Shared/ForgotPassword";
 
+
 // Admin Pages
 import AdminLayout from "../pages/Admin/AdminLayout";
 import AdminDashboard from "../pages/Admin/AdminDashboard";
@@ -37,14 +38,20 @@ import ClassDetail from "../pages/Instructor/ClassDetail";
 import TeacherDashboard from "../pages/Instructor/TeacherDashboard";
 import HelpCenter from "../pages/Instructor/HelpCenter";
 
+// Student Pages
+import StudentDashboard from "../pages/Student/StudentDashboard";
+import StudentExamList from "../pages/Student/ExamList";
+import StudentResults from "../pages/Student/StudentResults";
+import TakeExam from "../pages/Student/TakeExam";
+
 // HomeRedirect để điều hướng user về đúng workspace
 const HomeRedirect = () => {
   const { user } = useAuth();
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Home />;
 
   if (user.role === "ADMIN") return <Navigate to="/admin/dashboard" replace />;
   if (user.role === "TEACHER") return <Navigate to="/teacher/dashboard" replace />;
-  return <Navigate to="/home" replace />;
+  return <Navigate to="/student/dashboard" replace />;
 };
 
 const AppRoutes = () => {
@@ -164,15 +171,19 @@ const AppRoutes = () => {
 
       {/* Student Routes */}
       <Route
+        path="/student"
         element={
           <ProtectedRoute allowedRoles={["STUDENT"]}>
             <StudentLayout />
           </ProtectedRoute>
         }
       >
-        <Route path="/home" element={<Home />} />
-        <Route path="/results" element={<ResultsManagement />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<StudentDashboard />} />
+        <Route path="exams" element={<StudentExamList />} />
+        <Route path="take-exam/:examId" element={<TakeExam />} />
+        <Route path="results" element={<StudentResults />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
 
       {/* 404 Catch-all */}
