@@ -3,7 +3,6 @@ import { Outlet, Navigate, Link } from 'react-router-dom';
 import { BellOutlined } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
 import ProfileDropdown from '../components/ProfileDropdown';
-import GlobalModals from '../components/GlobalModals';
 
 const StudentLayout = () => {
   const { user } = useAuth();
@@ -12,33 +11,30 @@ const StudentLayout = () => {
     <div className="student-layout" style={{ minHeight: '100vh', background: '#f8fafc' }}>
       <div className="app-header" style={{ position: 'sticky', top: 0, zIndex: 1000 }}>
         <div className="app-logo">
-          <div className="logo-dot">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-            </svg>
+          <div className="logo-dot" style={{ background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px' }}>
+            <span style={{ color: 'white', fontWeight: 'bold' }}>V</span>
           </div>
-          <span className="logo-text">MCQ Training</span>
+          <span className="logo-text" style={{ fontWeight: 800 }}>VTI Champion</span>
         </div>
         
         <nav className="app-nav">
-          <Link to="/home" className="cursor-pointer">
+          <Link to="/student/dashboard" className="cursor-pointer">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}>
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
-            Trang chủ
+            Tổng quan
           </Link>
-          <Link to="/exam-list" className="cursor-pointer">
+          <Link to="/student/exams" className="cursor-pointer">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}>
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
               <polyline points="14 2 14 8 20 8" />
               <line x1="16" y1="13" x2="8" y2="13" />
               <line x1="16" y1="17" x2="8" y2="17" />
             </svg>
-            Bài thi
+            Kỳ thi
           </Link>
-          <Link to="/results" className="cursor-pointer">
+          <Link to="/student/results" className="cursor-pointer">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}>
               <line x1="18" y1="20" x2="18" y2="10" />
               <line x1="12" y1="20" x2="12" y2="4" />
@@ -46,7 +42,7 @@ const StudentLayout = () => {
             </svg>
             Kết quả
           </Link>
-          <Link to="/profile" className="cursor-pointer">
+          <Link to="/student/profile" className="cursor-pointer">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}>
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
               <circle cx="12" cy="7" r="4" />
@@ -74,8 +70,6 @@ const StudentLayout = () => {
       <main style={{ padding: '20px 15px' }}>
         <Outlet />
       </main>
-      
-      <GlobalModals />
     </div>
   );
 };

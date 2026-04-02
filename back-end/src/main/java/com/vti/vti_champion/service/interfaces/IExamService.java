@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 public interface IExamService {
     ExamResponse createExam(CreateExamRequest request);
-    Page<ExamResponse> getAllExams(String keyword, Integer classId, Integer creatorId, LocalDate startDate, LocalDate endDate, Pageable pageable);
+    Page<ExamResponse> getAllExams(String keyword, Integer classId, Integer teacherId, LocalDate startDate, LocalDate endDate, Pageable pageable);
     void deleteExam(Integer id);
     ExamResponse updateExam(Integer examId, UpdateExamRequest request);
 }

@@ -13,11 +13,18 @@ import java.util.List;
 
 public interface IUserService {
     public User getUserByUsernameOrEmail(String username, String email);
+
     User register(RegisterRequest request);
+
     User updateMe(Integer userId, UpdateUserRequest request, MultipartFile avatar);
+
     boolean findUserByEmail(String email);
+
     Page<UserResponse> getAllUsers(org.springframework.data.domain.Pageable pageable);
+
     void resetPassword(String email, String code, String newPassword);
+
     User findById(Integer id);
+
     List<StudentResponse> getStudentsByTeacher(Integer teacherId);
 }

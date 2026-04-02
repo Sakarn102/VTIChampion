@@ -23,8 +23,8 @@ public class ExamResult {
     @JoinColumn(name = "student_id")
     private User student;
 
-    @Column(name = "score", precision = 5, scale = 2)
-    private BigDecimal score;
+    @Column(name = "score")
+    private Double score;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;
@@ -32,4 +32,6 @@ public class ExamResult {
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
+    @Column(name = "status")
+    private String status;
 }

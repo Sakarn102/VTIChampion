@@ -1,0 +1,89 @@
+/* TeacherDashboard.css - Dedicated styles for the instructor overview */
+
+.teacher-dashboard-container {
+    padding: 24px;
+}
+
+@keyframes gold-pulse {
+    0% { transform: scale(0.9); filter: drop-shadow(0 0 0px #fbbf24); }
+    50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #fbbf24); }
+    100% { transform: scale(0.9); filter: drop-shadow(0 0 0px #fbbf24); }
+}
+
+.gold-trophy {
+    color: #fbbf24;
+    font-size: 64px;
+    margin: 0 auto 20px auto;
+    display: inline-block;
+    animation: gold-pulse 2.5s infinite ease-in-out;
+    transform-origin: center center;
+}
+
+.quality-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    background: white;
+    border: 2px solid #eff6ff;
+    position: relative;
+    overflow: hidden;
+    padding: 24px;
+}
+
+.quality-badge {
+    padding: 12px 24px;
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 20px;
+    display: block;
+    margin: 12px auto;
+    width: fit-content;
+}
+
+.chart-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.spectrum-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.stat-value-large {
+    color: #1e293b;
+    font-size: 32px;
+    margin: 0;
+    font-weight: 800;
+}
+
+.stat-label-muted {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.quality-subtext {
+    font-size: 13px;
+    color: #64748b;
+    font-style: italic;
+    padding: 0 20px;
+}
+
+/* Response for small screens */
+@media (max-width: 1200px) {
+    .chart-row {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .chart-row, .spectrum-row {
+        grid-template-columns: 1fr;
+    }
+}

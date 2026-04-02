@@ -29,9 +29,8 @@ const TeacherLayout = () => {
   const menuItems = [
     { path: '/teacher/dashboard', icon: <AppstoreOutlined />, label: 'Dashboard' },
     { path: '/teacher/exams', icon: <FileTextOutlined />, label: 'Quản lý Đề thi' },
-    { path: '/teacher/students', icon: <TeamOutlined />, label: 'Học viên' },
-    { path: '/teacher/reports', icon: <BarChartOutlined />, label: 'Báo cáo' },
-    { path: '/teacher/questions', icon: <QuestionCircleOutlined />, label: 'Ngân hàng Câu hỏi' },
+    { path: '/teacher/students', icon: <TeamOutlined />, label: 'Quản lý lớp học' },
+    { path: '/teacher/help', icon: <QuestionCircleOutlined />, label: 'Trung tâm hỗ trợ' },
   ];
 
   return (
@@ -42,16 +41,19 @@ const TeacherLayout = () => {
         onClick={() => setMobileOpen(false)}
       />
 
-      <aside className={`admin-sidebar ${mobileOpen ? 'mobile-open' : ''}`} style={{borderColor: '#fbbf24'}}>
-        <div className="admin-logo">
+      <aside className={`admin-sidebar ${mobileOpen ? 'mobile-open' : ''}`}>
+        <div className="admin-logo" style={{ padding: '24px 20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div className="logo-icon" style={{background: '#ca8a04'}}>T</div>
-              <span className="logo-text">Teacher Workspace</span>
+            <div 
+              style={{ display: 'flex', flexDirection: 'column', gap: '4px', lineHeight: 1.2, cursor: 'pointer' }}
+              onClick={() => navigate('/teacher/dashboard')}
+            >
+              <span style={{ fontSize: '20px', fontWeight: 800, color: '#1e3a8a', letterSpacing: '-0.5px' }}>Teacher</span>
+              <span style={{ fontSize: '15px', fontWeight: 700, color: '#2563eb', textTransform: 'uppercase', letterSpacing: '1px' }}>Workspace</span>
             </div>
             <CloseOutlined 
               className="mobile-header-toggle" 
-              style={{ fontSize: '20px', margin: 0 }} 
+              style={{ fontSize: '20px', color: '#94a3b8' }} 
               onClick={() => setMobileOpen(false)} 
             />
           </div>
@@ -78,10 +80,7 @@ const TeacherLayout = () => {
                className="mobile-header-toggle" 
                onClick={() => setMobileOpen(true)} 
             />
-            <div className="admin-header-search">
-               <SearchOutlined />
-               <input type="text" placeholder="Tìm đề thi, câu hỏi..." />
-            </div>
+           
           </div>
           
           <div className="admin-header-right">
@@ -91,7 +90,7 @@ const TeacherLayout = () => {
             </div>
             
             <ProfileDropdown>
-               <div className="user-avatar" style={{ border: '2px solid #fde68a' }}>
+               <div className="user-avatar">
                  {user?.fullname?.charAt(0) || 'T'}
                </div>
             </ProfileDropdown>

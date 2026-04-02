@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Table, Button, Input, Modal, Form, Select, Tag } from 'antd';
 import { PlusOutlined, UserOutlined, EditOutlined, DeleteOutlined, TeamOutlined } from '@ant-design/icons';
 import '../../styles/Admin.css';
+import '../../styles/ClassManagement.css';
 
 const { Option } = Select;
 
@@ -21,11 +22,11 @@ const ClassManagement = () => {
       dataIndex: 'className',
       key: 'className',
       render: (text) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ padding: '8px', background: '#eff6ff', borderRadius: '8px', color: '#2563eb' }}>
+        <div className="class-mgt-className-wrap">
+          <div className="class-mgt-className-icon">
             <TeamOutlined />
           </div>
-          <span style={{ fontWeight: 700, color: '#1e293b' }}>{text}</span>
+          <span className="class-mgt-className-text">{text}</span>
         </div>
       )
     },
@@ -34,8 +35,8 @@ const ClassManagement = () => {
       dataIndex: 'teacher',
       key: 'teacher',
       render: (text) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <UserOutlined style={{ color: '#64748b' }} />
+        <div className="class-mgt-teacher-wrap">
+          <UserOutlined className="class-mgt-teacher-icon" />
           <span>{text}</span>
         </div>
       )
@@ -45,7 +46,7 @@ const ClassManagement = () => {
       dataIndex: 'students',
       key: 'students',
       render: (count) => (
-        <Tag color="blue" style={{ borderRadius: '12px', fontWeight: 600 }}>{count} Học viên</Tag>
+        <Tag color="blue" className="class-mgt-students-tag">{count} Học viên</Tag>
       )
     },
     {
@@ -53,7 +54,7 @@ const ClassManagement = () => {
       dataIndex: 'status',
       key: 'status',
       render: (status) => (
-        <span className={`status-badge ${status === 'Active' ? 'status-active' : 'status-blocked'}`} style={status === 'Ended' ? {background: '#f1f5f9', color: '#64748b'} : {}}>
+        <span className={`status-badge ${status === 'Active' ? 'status-active' : 'status-blocked'} ${status === 'Ended' ? 'class-mgt-status-ended' : ''}`}>
           {status === 'Active' ? 'Đang học' : 'Kết thúc'}
         </span>
       )
@@ -62,8 +63,8 @@ const ClassManagement = () => {
       title: 'Thao tác',
       key: 'actions',
       render: () => (
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <Button type="text" icon={<EditOutlined style={{ color: '#3b82f6' }} />} />
+        <div className="class-mgt-actions-wrap">
+          <Button type="text" icon={<EditOutlined className="class-mgt-icon-edit" />} />
           <Button type="text" danger icon={<DeleteOutlined />} />
         </div>
       )
@@ -80,8 +81,8 @@ const ClassManagement = () => {
       </div>
 
       <div className="admin-filter-bar">
-        <Input.Search placeholder="Tìm theo tên lớp, giáo viên..." style={{ width: 350 }} size="large" />
-        <Select defaultValue="ALL" size="large" style={{ width: 180 }}>
+        <Input.Search placeholder="Tìm theo tên lớp, giáo viên..." className="class-mgt-search" size="large" />
+        <Select defaultValue="ALL" size="large" className="class-mgt-select">
           <Option value="ALL">Tất cả giáo viên</Option>
           <Option value="1">Nguyễn Văn A</Option>
           <Option value="2">Trần Thị B</Option>
@@ -92,8 +93,8 @@ const ClassManagement = () => {
         <Table dataSource={dataSource} columns={columns} pagination={{ pageSize: 6 }} />
       </div>
 
-      <Modal title={<span style={{fontSize: '20px', fontWeight: 800}}>Tạo lớp học mới</span>} open={isModalOpen} onCancel={() => setIsModalOpen(false)} footer={null}>
-        <Form layout="vertical" style={{ marginTop: '20px' }}>
+      <Modal title={<span className="class-mgt-modal-title">Tạo lớp học mới</span>} open={isModalOpen} onCancel={() => setIsModalOpen(false)} footer={null}>
+        <Form layout="vertical" className="class-mgt-form">
           <Form.Item label="Tên lớp học" name="className" rules={[{ required: true }]}>
             <Input size="large" placeholder="Ví dụ: VTI_REACT_2024" />
           </Form.Item>
@@ -104,12 +105,12 @@ const ClassManagement = () => {
             </Select>
           </Form.Item>
           <Form.Item label="Học viên" name="students">
-            <Select mode="multiple" size="large" placeholder="Chọn học viên vào lớp" style={{ width: '100%' }}>
+            <Select mode="multiple" size="large" placeholder="Chọn học viên vào lớp" className="class-mgt-students-select">
               <Option value="s1">Lê Văn C</Option>
               <Option value="s2">Phạm Văn D</Option>
             </Select>
           </Form.Item>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '32px' }}>
+          <div className="class-mgt-modal-actions">
             <button type="button" className="admin-btn-outline" onClick={() => setIsModalOpen(false)}>Hủy</button>
             <button type="submit" className="admin-btn-primary">Lưu thông tin</button>
           </div>

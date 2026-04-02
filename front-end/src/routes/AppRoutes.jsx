@@ -12,6 +12,7 @@ import Profile from "../pages/Shared/Profile";
 import ResetPassword from "../pages/Shared/ResetPassword";
 import ForgotPassword from "../pages/Shared/ForgotPassword";
 
+
 // Admin Pages
 import AdminLayout from "../pages/Admin/AdminLayout";
 import AdminDashboard from "../pages/Admin/AdminDashboard";
@@ -31,15 +32,26 @@ import ExamList from "../pages/Instructor/ExamList";
 import CreateExam from "../pages/Instructor/CreateExam";
 import EditExam from "../pages/Instructor/EditExam";
 import ExamDetail from "../pages/Instructor/ExamDetail";
+import ExamQuestions from "../pages/Instructor/ExamQuestions";
+import ClassList from "../pages/Instructor/ClassList";
+import ClassDetail from "../pages/Instructor/ClassDetail";
+import TeacherDashboard from "../pages/Instructor/TeacherDashboard";
+import HelpCenter from "../pages/Instructor/HelpCenter";
+
+// Student Pages
+import StudentDashboard from "../pages/Student/StudentDashboard";
+import StudentExamList from "../pages/Student/ExamList";
+import StudentResults from "../pages/Student/StudentResults";
+import TakeExam from "../pages/Student/TakeExam";
 
 // HomeRedirect để điều hướng user về đúng workspace
 const HomeRedirect = () => {
   const { user } = useAuth();
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Home />;
 
   if (user.role === "ADMIN") return <Navigate to="/admin/dashboard" replace />;
-  if (user.role === "TEACHER") return <Navigate to="/teacher/exams" replace />;
-  return <Navigate to="/home" replace />;
+  if (user.role === "TEACHER") return <Navigate to="/teacher/dashboard" replace />;
+  return <Navigate to="/student/dashboard" replace />;
 };
 
 const AppRoutes = () => {
@@ -134,21 +146,22 @@ const AppRoutes = () => {
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route
           path="dashboard"
-          element={<GenericAdminPage title="Bảng điều khiển Giảng viên" />}
+          element={<TeacherDashboard />}
         />
         <Route path="exams" element={<ExamList />} />
         <Route path="exams/create" element={<CreateExam />} />
         <Route path="exams/:examId" element={<ExamDetail />} />
+        <Route path="exams/:examId/questions" element={<ExamQuestions />} />
         <Route path="exams/:examId/edit" element={<EditExam />} />
         <Route
           path="students"
-          element={<GenericAdminPage title="Quản lý Học viên" />}
+          element={<ClassList />}
         />
         <Route
-          path="reports"
-          element={<GenericAdminPage title="Báo cáo kết quả" />}
+          path="students/:classId"
+          element={<ClassDetail />}
         />
-        <Route path="questions" element={<QuestionManagement />} />
+        <Route path="help" element={<HelpCenter />} />
         <Route
           path="notifications"
           element={<GenericAdminPage title="Thông báo Giảng viên" />}
@@ -158,15 +171,19 @@ const AppRoutes = () => {
 
       {/* Student Routes */}
       <Route
+        path="/student"
         element={
           <ProtectedRoute allowedRoles={["STUDENT"]}>
             <StudentLayout />
           </ProtectedRoute>
         }
       >
-        <Route path="/home" element={<Home />} />
-        <Route path="/results" element={<ResultsManagement />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<StudentDashboard />} />
+        <Route path="exams" element={<StudentExamList />} />
+        <Route path="take-exam/:examId" element={<TakeExam />} />
+        <Route path="results" element={<StudentResults />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
 
       {/* 404 Catch-all */}

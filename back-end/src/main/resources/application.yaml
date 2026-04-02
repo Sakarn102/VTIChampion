@@ -1,8 +1,8 @@
 jwt:
   secret: 1234567890abcdef1234567890abcdef
-  access-expiration: 900000
+  access-expiration: 3600000
   refresh-expiration: 2592000000
-
+  remember-me-expiration: 86400000
 spring:
   application:
     name: back-end

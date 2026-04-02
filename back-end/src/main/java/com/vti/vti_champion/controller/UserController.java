@@ -82,6 +82,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
 
+    // Lấy danh sách học viên
     @GetMapping("/teacher/my-students")
     public ResponseEntity<List<StudentResponse>> getStudentsByTeacher(Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();

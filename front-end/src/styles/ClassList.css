@@ -1,0 +1,111 @@
+.class-list-container {
+  padding: 0;
+}
+
+.class-list-page-actions {
+  margin-bottom: 24px;
+}
+
+.class-list-page-icon {
+  margin-right: 10px;
+  color: #1d4ed8;
+}
+
+.stat-item-box-active {
+  border-color: #86efac;
+}
+
+.stat-icon-wrap-active {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.stat-item-box-inactive {
+  border-color: #fecaca;
+}
+
+.stat-icon-wrap-inactive {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.class-list-table-header {
+  grid-template-columns: 1.2fr 100px 150px 130px 110px;
+  padding: 14px 40px;
+  gap: 20px;
+}
+
+.class-list-table-row {
+  grid-template-columns: 1.2fr 100px 150px 130px 110px;
+  padding: 16px 40px;
+  gap: 20px;
+}
+
+.class-list-exam-title {
+  color: #1d4ed8;
+}
+
+.class-list-teacher-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.class-list-teacher-avatar {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.class-list-teacher-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.status-text-active {
+  color: #10b981; /* Green */
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.status-text-inactive {
+  color: #64748b; /* Gray */
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.class-list-exam-count {
+  background: #f0f7ff;
+  color: #1d4ed8;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 800;
+}
+
+.class-list-student-count {
+  font-weight: 800;
+  color: #2563eb;
+  font-size: 16px;
+}
+
+.class-list-calendar-icon {
+  margin-right: 5px;
+}
+
+.class-list-badge-active {
+  color: #16a34a !important;
+  font-weight: 700 !important;
+}
+
+.class-list-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+

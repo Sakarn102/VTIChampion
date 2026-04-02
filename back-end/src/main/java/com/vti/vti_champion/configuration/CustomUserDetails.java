@@ -22,6 +22,8 @@ public class CustomUserDetails implements UserDetails {
     private String email;
     private String avatarUrl;
     private String password;
+    private boolean isActive;
+    private boolean enabled;
     private Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(User  user) {
@@ -31,10 +33,24 @@ public class CustomUserDetails implements UserDetails {
         this.fullName = user.getFullname();
         this.avatarUrl = user.getAvatarUrl();
         this.password = user.getPassword();
+        this.isActive = user.getIsActive();
         this.authorities = List.of(new SimpleGrantedAuthority(
                 "ROLE_" + user.getRole().getName().toUpperCase().trim())
         );
     }
+
+    // Method cua userdetail
+    @Override
+    public boolean isEnabled() {
+        return this.isActive;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        // Có thể trả về cùng giá trị enabled để tăng độ bảo mật
+        return this.isActive;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

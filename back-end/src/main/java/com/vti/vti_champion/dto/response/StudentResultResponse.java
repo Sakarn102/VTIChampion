@@ -10,7 +10,7 @@ public class StudentResultResponse {
     private Integer examResultId;
     private String examTitle;
     private String examCode;
-    private BigDecimal score;
+    private Double score;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String type; // 'Test' hoặc 'Practice' từ bảng exam

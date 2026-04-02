@@ -11,5 +11,4 @@ import lombok.NoArgsConstructor;
 public class SettingResponse {
     private Integer id;
     private String name;
-    private Setting setting;
 }

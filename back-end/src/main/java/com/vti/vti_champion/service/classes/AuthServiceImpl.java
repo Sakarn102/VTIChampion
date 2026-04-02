@@ -54,7 +54,7 @@ public class AuthServiceImpl implements IAuthService {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
             // 3. Tạo Token
-            String accessToken = jwtService.generateAccessToken(userDetails);
+            String accessToken = jwtService.generateAccessToken(userDetails, request.isRememberMe());
             RefreshToken token = refreshTokenService.createRefreshToken(user);
 
             // 4. Tạo Cookies

@@ -1,5 +1,6 @@
 package com.vti.vti_champion.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CurrentTimestamp;
@@ -36,11 +37,19 @@ public class Class {
 
     @ManyToOne
     @JoinColumn(name = "teacher_id") // Giảng viên chủ nhiệm/người tạo lớp
+    @JsonIgnore
     private User teacher;
 
     // Quan hệ với Exam: Một lớp có nhiều bài thi
     @OneToMany(mappedBy = "classRoom")
+    @JsonIgnore
     private List<Exam> exams;
 
-
+    @ManyToMany
+    @JoinTable(
+            name = "class_user",
+            joinColumns = @JoinColumn(name = "class_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
+    private List<User> students;
 }

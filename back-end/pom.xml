@@ -159,6 +159,12 @@
             <version>3.0.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.5</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -176,7 +182,6 @@
                     </annotationProcessorPaths>
                     <source>21</source>
                     <target>21</target>
-                    <compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
 
