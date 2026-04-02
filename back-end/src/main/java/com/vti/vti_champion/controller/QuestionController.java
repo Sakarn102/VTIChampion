@@ -1,8 +1,10 @@
 package com.vti.vti_champion.controller;
 
+import com.sun.security.auth.UserPrincipal;
 import com.vti.vti_champion.configuration.CustomUserDetails;
 import com.vti.vti_champion.dto.request.CreateQuestionRequest;
 import com.vti.vti_champion.dto.request.UpdateQuestionRequest;
+import com.vti.vti_champion.dto.response.ImportResponse;
 import com.vti.vti_champion.dto.response.PracticeQuestionResponse;
 import com.vti.vti_champion.dto.response.QuestionResponse;
 import com.vti.vti_champion.entity.Question;
@@ -11,10 +13,14 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -90,6 +96,32 @@ public class QuestionController {
     public ResponseEntity<List<PracticeQuestionResponse>> startPractice(@PathVariable Integer examId) {
         List<PracticeQuestionResponse> responses = questionService.getPracticeExam(examId);
         return ResponseEntity.ok(responses);
+    }
+
+    //
+    @PostMapping("/import")
+    public ResponseEntity<?> importQuestions(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("examId") Integer examId,
+            Authentication authentication)
+    {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Integer currentTeacherid = userDetails.getId();
+
+        ImportResponse response = questionService.importQuestions(file, examId, currentTeacherid);
+
+        return ResponseEntity.ok(response);
+    }
+
+    //
+    @GetMapping("/download-template")
+    public ResponseEntity<byte[]> downloadTemplate() {
+        byte[] fileContent = questionService.downloadTemplate();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=question_template.xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(fileContent);
     }
 
 }

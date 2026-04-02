@@ -1,9 +1,8 @@
 jwt:
   secret: 1234567890abcdef1234567890abcdef
-  # 100 năm = 100 * 365 * 24 * 60 * 60 * 1000 = 3153600000000
-  access-expiration: 3153600000000
+  access-expiration: 3600000
   refresh-expiration: 2592000000
-
+  remember-me-expiration: 86400000
 spring:
   application:
     name: back-end

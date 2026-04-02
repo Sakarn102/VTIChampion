@@ -20,11 +20,15 @@ public class JwtService {
     @Value("${jwt.access-expiration}")
     private Long accessExpiration;
 
+    @Value("${jwt.remember-me-expiration}")
+    private Long rememberMeExpiration;
+
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateAccessToken(UserDetails user) {
+    public String generateAccessToken(UserDetails user, boolean rememberMe) {
+        long expirationTime = rememberMe ? rememberMeExpiration : accessExpiration;
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .claim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
