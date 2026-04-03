@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Table, Tag, Button, Input, Space, Card, Typography, Spin, message, Row, Col, Statistic } from "antd";
 import { SearchOutlined, EyeOutlined, HistoryOutlined, TrophyOutlined, CalendarOutlined, CheckCircleOutlined, CloseCircleOutlined, BookOutlined } from "@ant-design/icons";
 import resultApi from "../../api/resultApi";
@@ -7,6 +8,7 @@ import "../../styles/Admin.css";
 const { Title, Text } = Typography;
 
 const StudentResults = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [keyword, setKeyword] = useState("");
@@ -32,7 +34,7 @@ const StudentResults = () => {
   const totalExams = results.length;
   const avgScore = totalExams > 0 
     ? (results.reduce((acc, curr) => acc + (curr.score || 0), 0) / totalExams).toFixed(1) 
-    : 0;
+    : "0.0";
   const passedExams = results.filter(r => (r.score || 0) >= 4.0).length;
 
   const filteredResults = results.filter(item => 
@@ -84,7 +86,7 @@ const StudentResults = () => {
             borderRadius: '24px',
             border: `1px solid ${color}30`
           }}>
-            {score.toFixed(1)}
+            {score?.toFixed(1) || "0.0"}
           </span>
         );
       }
@@ -93,11 +95,12 @@ const StudentResults = () => {
        title: "Hành động",
        key: "actions",
        align: 'right',
-       render: () => (
+       render: (_, record) => (
          <Button 
            type="text" 
            icon={<EyeOutlined />} 
            style={{ color: '#6366f1', fontWeight: 600 }}
+           onClick={() => navigate(`/student/results/${record.examResultId}`)}
          >
            Chi tiết
          </Button>

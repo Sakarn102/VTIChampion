@@ -130,7 +130,7 @@ const ExamManagement = () => {
             type="text"
             danger
             icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record.id)}
+            onClick={() => handleDelete(record.examId)}
             title="Xóa"
           />
         </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { 
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import {
   Typography, Button, Card, Radio, Space, Progress, 
   Modal, Row, Col, Spin, message, Tag, Divider, Statistic 
 } from "antd";
@@ -19,6 +19,7 @@ const { Title, Text, Paragraph } = Typography;
 export default function TakeExam() {
   const { examId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [questions, setQuestions] = useState([]);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -41,11 +42,12 @@ export default function TakeExam() {
         const questionData = questionsRes.data || questionsRes || [];
         setQuestions(questionData);
 
-        // Set duration (mock or from backend if available)
-        setTimeLeft(60 * 60); // 60 minutes default
+        // Set duration from params or default to 60
+        const durationMin = location.state?.duration || 60;
+        setTimeLeft(durationMin * 60);
       } catch (error) {
-        console.error(error);
-        message.error("Không thể khởi tạo bài thi!");
+        console.error("Init exam error:", error);
+        message.error(`Lỗi khởi tạo: ${error}`);
         navigate("/student/exams");
       } finally {
         setLoading(false);
@@ -56,15 +58,28 @@ export default function TakeExam() {
 
   // Timer Effect
   useEffect(() => {
-    if (timeLeft === null || timeLeft <= 0) {
-      if (timeLeft === 0) handleSubmit();
-      return;
-    }
+    if (timeLeft === null || timeLeft <= 0) return;
+    
     const timer = setInterval(() => {
-      setTimeLeft(prev => prev - 1);
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
+    
     return () => clearInterval(timer);
-  }, [timeLeft]);
+  }, [timeLeft === null]);
+
+  // Handle timeout
+  useEffect(() => {
+    if (timeLeft === 0 && !submitting && examResultId) {
+       message.warning("Đã hết thời gian làm bài, hệ thống tự động nộp bài!");
+       doSubmit();
+    }
+  }, [timeLeft, submitting, examResultId]);
 
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60);
@@ -82,6 +97,27 @@ export default function TakeExam() {
     }).catch(console.error);
   };
 
+  const doSubmit = async () => {
+    try {
+      setSubmitting(true);
+      const res = await takeExamApi.submitExam(examResultId);
+      Modal.success({
+        title: "Đã nộp bài thành công!",
+        content: (
+          <div>
+            <Title level={4}>Kết quả của bạn:</Title>
+            <Statistic title="Điểm số" value={res.data?.score || res.score} suffix="/ 10" />
+            <p style={{marginTop: '10px'}}>Số câu đúng: {res.data?.totalCorrect || res.totalCorrect} / {res.data?.totalQuestions || res.totalQuestions || questions.length}</p>
+          </div>
+        ),
+        onOk: () => navigate("/student/results")
+      });
+    } catch (error) {
+      message.error("Lỗi khi nộp bài!");
+      setSubmitting(false); // Only set to false if error, so user can retry. If success, we navigate anyway.
+    }
+  };
+
   const handleSubmit = () => {
     Modal.confirm({
       title: "Xác nhận nộp bài",
@@ -89,27 +125,7 @@ export default function TakeExam() {
       content: "Bạn có chắc chắn muốn kết thúc bài thi và nộp bài không?",
       okText: "Nộp bài",
       cancelText: "Tiếp tục làm",
-      onOk: async () => {
-        try {
-          setSubmitting(true);
-          const res = await takeExamApi.submitExam(examResultId);
-          Modal.success({
-            title: "Đã nộp bài thành công!",
-            content: (
-              <div>
-                <Title level={4}>Kết quả của bạn:</Title>
-                <Statistic title="Điểm số" value={res.data?.score || res.score} suffix="/ 10" />
-                <p style={{marginTop: '10px'}}>Số câu đúng: {res.data?.correctCount || res.correctCount} / {questions.length}</p>
-              </div>
-            ),
-            onOk: () => navigate("/student/results")
-          });
-        } catch (error) {
-          message.error("Lỗi khi nộp bài!");
-        } finally {
-          setSubmitting(false);
-        }
-      }
+      onOk: doSubmit
     });
   };
 
@@ -128,6 +144,7 @@ export default function TakeExam() {
           <Col xs={24} md={12}>
              <Button icon={<LeftOutlined />} onClick={() => navigate(-1)}>Thoát</Button>
              <span style={{ marginLeft: '16px', fontWeight: 600, fontSize: '18px' }}>Đang thi: {currentIdx + 1} / {questions.length}</span>
+             {location.state?.isPractice && <Tag color="green" style={{ marginLeft: '12px' }}>CHẾ ĐỘ LUYỆN TẬP</Tag>}
           </Col>
           <Col xs={24} md={12} style={{ textAlign: 'right' }}>
             <Card bodyStyle={{ padding: '8px 20px' }} style={{ display: 'inline-block', borderRadius: '12px' }}>
@@ -150,12 +167,12 @@ export default function TakeExam() {
                  <Title level={4} style={{ marginBottom: '40px', lineHeight: 1.6 }}>{currentQ.content}</Title>
 
                  <Radio.Group 
-                  onChange={(e) => handleAnswer(currentQ.questionId, e.target.value)} 
-                  value={answers[currentQ.questionId]} 
+                  onChange={(e) => handleAnswer(currentQ.id, e.target.value)} 
+                  value={answers[currentQ.id]} 
                   style={{ width: '100%' }}
                  >
                    <Space direction="vertical" style={{ width: '100%' }} size="large">
-                     {currentQ.options?.map((opt, idx) => (
+                     {currentQ.answers?.map((opt, idx) => (
                        <Radio.Button 
                         key={opt.id} 
                         value={opt.id} 
@@ -167,8 +184,8 @@ export default function TakeExam() {
                           textAlign: 'left',
                           display: 'flex',
                           alignItems: 'center',
-                          border: answers[currentQ.questionId] === opt.id ? '2px solid #3b82f6' : '1px solid #e2e8f0',
-                          background: answers[currentQ.questionId] === opt.id ? '#eff6ff' : 'white'
+                          border: answers[currentQ.id] === opt.id ? '2px solid #3b82f6' : '1px solid #e2e8f0',
+                          background: answers[currentQ.id] === opt.id ? '#eff6ff' : 'white'
                         }}
                        >
                          <span style={{ fontWeight: 600, marginRight: '12px' }}>{String.fromCharCode(65 + idx)}.</span>
@@ -213,12 +230,12 @@ export default function TakeExam() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
                 {questions.map((q, idx) => (
                   <Button 
-                    key={q.questionId}
+                    key={q.id}
                     style={{ 
                       height: '40px', 
                       borderRadius: '8px',
-                      background: answers[q.questionId] ? '#3b82f6' : (currentIdx === idx ? '#dbeafe' : 'white'),
-                      color: answers[q.questionId] ? 'white' : (currentIdx === idx ? '#2563eb' : '#64748b'),
+                      background: answers[q.id] ? '#3b82f6' : (currentIdx === idx ? '#dbeafe' : 'white'),
+                      color: answers[q.id] ? 'white' : (currentIdx === idx ? '#2563eb' : '#64748b'),
                       border: currentIdx === idx ? '1px solid #2563eb' : '1px solid #e2e8f0',
                       fontWeight: 700
                     }}

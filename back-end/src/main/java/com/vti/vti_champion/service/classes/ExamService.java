@@ -99,6 +99,7 @@ public class ExamService implements IExamService {
         ExamResponse examResponse = modelMapper.map(exam, ExamResponse.class);
         examResponse.setCreatorName(creator.getFullname());
         examResponse.setClassName(classRoom.getName());
+        if (exam.getType() != null) examResponse.setType(exam.getType().name());
 
         return examResponse;
     }
@@ -123,6 +124,9 @@ public class ExamService implements IExamService {
                 response.setClassName(exam.getClassRoom().getName());
             if (exam.getTeacher() != null)
                 response.setCreatorName(exam.getTeacher().getFullname());
+            
+            if (exam.getType() != null)
+                response.setType(exam.getType().name());
 
             return response;
         });
@@ -190,6 +194,7 @@ public class ExamService implements IExamService {
 
         ExamResponse response = modelMapper.map(exam, ExamResponse.class);
         response.setClassName(exam.getClassRoom().getName());
+        if (exam.getType() != null) response.setType(exam.getType().name());
         return response;
     }
 }

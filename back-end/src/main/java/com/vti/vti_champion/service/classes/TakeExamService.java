@@ -30,14 +30,14 @@ public class TakeExamService {
     // 1. Khởi tạo lượt thi
     @Transactional
     public Integer startExam(StartExamRequest request, User student) {
+        Exam exam = examRepository.findById(request.getExamId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đề thi ID: " + request.getExamId()));
+        
         ExamResult examResult = new ExamResult();
-
-        Exam exam = new Exam();
-        exam.setId(request.getExamId());
-
         examResult.setExam(exam);
         examResult.setStudent(student);
         examResult.setStartTime(LocalDateTime.now());
+        examResult.setStatus("IN_PROGRESS");
 
         return examResultRepository.save(examResult).getId();
     }

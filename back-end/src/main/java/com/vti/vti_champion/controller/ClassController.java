@@ -8,6 +8,8 @@ import com.vti.vti_champion.repository.ClassRepository;
 import com.vti.vti_champion.repository.ClassUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import com.vti.vti_champion.configuration.CustomUserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -88,5 +90,28 @@ public class ClassController {
     public ResponseEntity<?> removeStudentFromClass(@PathVariable Integer id, @PathVariable Integer studentId) {
         classUserRepository.deleteByClassIdAndStudentId(id, studentId);
         return ResponseEntity.ok(Map.of("message", "Đã xóa học viên khỏi lớp"));
+    }
+
+    // GET /api/v1/classes/my-class
+    @GetMapping("/my-class")
+    public ResponseEntity<ClassResponse> getMyClass(Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        List<Class> classes = classUserRepository.findClassesByStudentId(userDetails.getId());
+        
+        if (classes.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Class cls = classes.get(0);
+        ClassResponse dto = new ClassResponse();
+        dto.setId(cls.getId());
+        dto.setName(cls.getName());
+        dto.setCreateDate(cls.getCreateDate());
+        dto.setThumbnailUrl(cls.getThumbnailUrl());
+        dto.setIsActive(cls.getIsActive());
+        dto.setDepartmentName(cls.getDepartment() != null ? cls.getDepartment().getName() : null);
+        dto.setTeacherName(cls.getTeacher() != null ? cls.getTeacher().getFullname() : "Chưa phân công");
+        
+        return ResponseEntity.ok(dto);
     }
 }

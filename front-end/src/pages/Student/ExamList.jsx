@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Input, Tag, Space, Card, Typography, Spin, message, Row, Col, Statistic } from "antd";
 import { SearchOutlined, PlayCircleOutlined, ClockCircleOutlined, BookOutlined, FilterOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import examApi from "../../api/examApi";
+import examApi from "../../api/ExamApi";
 import "../../styles/Admin.css";
 
 const { Title, Text } = Typography;
@@ -87,6 +87,16 @@ const ExamList = () => {
       ),
     },
     {
+      title: "Loại",
+      dataIndex: "type",
+      key: "type",
+      render: (type) => (
+        <Tag color={type === "Test" ? "volcano" : "green"}>
+          {type === "Test" ? "BÀI THI" : "LUYỆN TẬP"}
+        </Tag>
+      )
+    },
+    {
       title: "Số câu hỏi",
       dataIndex: "questionCount",
       key: "questionCount",
@@ -101,10 +111,10 @@ const ExamList = () => {
           type="primary" 
           shape="round" 
           icon={<PlayCircleOutlined />} 
-          style={{ background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)', border: 'none' }}
-          onClick={() => navigate(`/student/take-exam/${record.id}`)}
+          style={{ background: record.type === 'Practice' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)', border: 'none' }}
+          onClick={() => navigate(`/student/take-exam/${record.examId}`, { state: { duration: record.duration || 60, isPractice: record.type === 'Practice' } })}
         >
-          Vào thi ngay
+          {record.type === 'Practice' ? 'Luyện tập' : 'Vào thi ngay'}
         </Button>
       ),
     },
@@ -140,7 +150,7 @@ const ExamList = () => {
 
       <Card bordered={false} style={{ borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.03)', overflow: 'hidden' }}>
         <Table
-          rowKey="id"
+          rowKey="examId"
           dataSource={exams}
           columns={columns}
           loading={loading}

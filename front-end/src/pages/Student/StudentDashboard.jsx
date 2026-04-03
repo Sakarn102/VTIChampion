@@ -13,7 +13,8 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import resultApi from "../../api/resultApi";
-import examApi from "../../api/examApi";
+import examApi from "../../api/ExamApi";
+import classApi from "../../api/classApi";
 import { useAuth } from "../../context/AuthContext";
 
 const { Title, Text, Paragraph } = Typography;
@@ -24,15 +25,17 @@ export default function StudentDashboard() {
 
   const [history, setHistory] = useState([]);
   const [availableExams, setAvailableExams] = useState([]);
+  const [myClass, setMyClass] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [resHistory, resExams] = await Promise.all([
+        const [resHistory, resExams, resClass] = await Promise.all([
           resultApi.getHistory(),
-          examApi.getAll({ size: 20 }) // Fetch latest 20 exams
+          examApi.getAll({ size: 20 }), // Fetch latest 20 exams
+          classApi.getMyClass().catch(() => null)
         ]);
 
         const historyData = resHistory.data || resHistory || [];
@@ -40,6 +43,8 @@ export default function StudentDashboard() {
 
         const examsData = resExams.data?.content || resExams?.content || resExams?.data || [];
         setAvailableExams(Array.isArray(examsData) ? examsData : []);
+        
+        setMyClass(resClass?.data || resClass);
 
       } catch (error) {
         console.error("Dashboard fetch error:", error);
@@ -55,7 +60,7 @@ export default function StudentDashboard() {
   const examsCompleted = history.length;
   const avgScore = history.length > 0 
     ? (history.reduce((acc, curr) => acc + (curr.score || 0), 0) / history.length).toFixed(1) 
-    : 0;
+    : "0.0";
   
   // Lọc bài thi đang mở (nếu cần logic status, hiện tại giả sử tất cả các bài được mở đang ACTIVE)
   const activeExamsCount = availableExams.length;
@@ -90,12 +95,20 @@ export default function StudentDashboard() {
             Chào mừng trở lại, {user?.fullname || user?.username || "Học viên"}! 👋
           </Title>
           <Paragraph style={{ color: "rgba(255,255,255,0.8)", fontSize: "16px", marginTop: "8px", marginBottom: 0 }}>
-            Hôm nay là một ngày tuyệt vời để học hỏi điều mới. Hãy chinh phục các kỳ thi nhé!
+            {myClass ? `Bạn đang tham gia lớp: ${myClass.name}` : "Hôm nay là một ngày tuyệt vời để học hỏi điều mới. Hãy chinh phục các kỳ thi nhé!"}
           </Paragraph>
         </div>
-        <div style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(10px)", padding: "16px 24px", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.2)" }}>
-          <Text style={{ color: "rgba(255,255,255,0.8)", display: "block", marginBottom: "4px" }}>Tổng thời gian học</Text>
-          <Title level={3} style={{ color: "white", margin: 0 }}>{examsCompleted * 45} <span style={{ fontSize: "16px", fontWeight: "normal" }}>phút</span></Title>
+        <div style={{ display: 'flex', gap: '16px' }}>
+          {myClass && (
+            <div style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(10px)", padding: "16px 24px", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.2)" }}>
+              <Text style={{ color: "rgba(255,255,255,0.8)", display: "block", marginBottom: "4px" }}>Giảng viên</Text>
+              <Title level={4} style={{ color: "white", margin: 0 }}>{myClass.teacherName}</Title>
+            </div>
+          )}
+          <div style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(10px)", padding: "16px 24px", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.2)" }}>
+            <Text style={{ color: "rgba(255,255,255,0.8)", display: "block", marginBottom: "4px" }}>Tổng thời gian học</Text>
+            <Title level={4} style={{ color: "white", margin: 0 }}>{examsCompleted * 45} <span style={{ fontSize: "14px", fontWeight: "normal" }}>phút</span></Title>
+          </div>
         </div>
       </div>
 
@@ -169,7 +182,7 @@ export default function StudentDashboard() {
                // Lấy 3 bài mới nhất để mock giao diện
                availableExams.slice(0, 4).map((exam, idx) => (
                 <Card 
-                  key={exam.id || idx} 
+                  key={exam.examId || idx} 
                   hoverable 
                   bordered={false} 
                   style={{ borderRadius: "16px", boxShadow: "0 4px 12px rgba(0,0,0,0.02)" }}
@@ -189,7 +202,7 @@ export default function StudentDashboard() {
                       </Space>
                     </Col>
                     <Col>
-                      <Button type="primary" shape="round" icon={<PlayCircleOutlined />} onClick={() => navigate(`/student/take-exam/${exam.id}`)}>
+                      <Button type="primary" shape="round" icon={<PlayCircleOutlined />} onClick={() => navigate(`/student/take-exam/${exam.examId}`, { state: { duration: exam.duration || 60 } })}>
                         Bắt đầu thi
                       </Button>
                     </Col>

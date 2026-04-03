@@ -42,7 +42,9 @@ import HelpCenter from "../pages/Instructor/HelpCenter";
 import StudentDashboard from "../pages/Student/StudentDashboard";
 import StudentExamList from "../pages/Student/ExamList";
 import StudentResults from "../pages/Student/StudentResults";
+import ResultDetail from "../pages/Student/ResultDetail";
 import TakeExam from "../pages/Student/TakeExam";
+import StudentPending from "../pages/Student/StudentPending";
 
 // HomeRedirect để điều hướng user về đúng workspace
 const HomeRedirect = () => {
@@ -51,10 +53,16 @@ const HomeRedirect = () => {
 
   if (user.role === "ADMIN") return <Navigate to="/admin/dashboard" replace />;
   if (user.role === "TEACHER") return <Navigate to="/teacher/dashboard" replace />;
+  
+  if (user.role === "STUDENT" && user.hasClass === false) {
+    return <Navigate to="/student/pending" replace />;
+  }
+  
   return <Navigate to="/student/dashboard" replace />;
 };
 
 const AppRoutes = () => {
+  const { user } = useAuth();
   return (
     <Routes>
       {/* Public Routes - Guest Only */}
@@ -116,6 +124,7 @@ const AppRoutes = () => {
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="classes" element={<ClassManagement />} />
+        <Route path="classes/:classId" element={<ClassDetail />} />
         <Route path="exams" element={<ExamManagement />} />
         <Route path="questions" element={<QuestionManagement />} />
         <Route path="results" element={<ResultsManagement />} />
@@ -171,10 +180,22 @@ const AppRoutes = () => {
 
       {/* Student Routes */}
       <Route
+        path="/student/pending"
+        element={
+          <ProtectedRoute allowedRoles={["STUDENT"]}>
+            <StudentPending />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/student"
         element={
           <ProtectedRoute allowedRoles={["STUDENT"]}>
-            <StudentLayout />
+            {user?.role === "STUDENT" && user?.hasClass === false ? (
+              <Navigate to="/student/pending" replace />
+            ) : (
+              <StudentLayout />
+            )}
           </ProtectedRoute>
         }
       >
@@ -183,6 +204,7 @@ const AppRoutes = () => {
         <Route path="exams" element={<StudentExamList />} />
         <Route path="take-exam/:examId" element={<TakeExam />} />
         <Route path="results" element={<StudentResults />} />
+        <Route path="results/:resultId" element={<ResultDetail />} />
         <Route path="profile" element={<Profile />} />
       </Route>
 

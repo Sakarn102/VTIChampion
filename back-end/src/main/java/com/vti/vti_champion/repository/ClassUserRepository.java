@@ -24,6 +24,12 @@ public interface ClassUserRepository extends JpaRepository<ClassUser, ClassUserI
     @Query("SELECT cu.student FROM ClassUser cu WHERE cu.classRoom.id = :classId")
     List<User> findStudentsByClassId(@Param("classId") Integer classId);
 
+    @Query("SELECT COUNT(cu) > 0 FROM ClassUser cu WHERE cu.student.id = :studentId")
+    boolean existsByStudentId(@Param("studentId") Integer studentId);
+
+    @Query("SELECT cu.classRoom FROM ClassUser cu WHERE cu.student.id = :studentId")
+    List<com.vti.vti_champion.entity.Class> findClassesByStudentId(@Param("studentId") Integer studentId);
+
     @org.springframework.transaction.annotation.Transactional
     @org.springframework.data.jpa.repository.Modifying
     @Query("DELETE FROM ClassUser cu WHERE cu.classRoom.id = :classId AND cu.student.id = :studentId")

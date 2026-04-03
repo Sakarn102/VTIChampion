@@ -5,7 +5,9 @@ const classApi = {
     getStudentCounts: () => axiosClient.get("/classes/student-counts"),
     toggleStatus: (id) => axiosClient.put(`/classes/${id}/toggle-status`),
     getStudentsByClass: (id) => axiosClient.get(`/classes/${id}/students`),
-    removeStudentFromClass: (classId, studentId) => axiosClient.delete(`/classes/${classId}/students/${studentId}`)
+    removeStudentFromClass: (classId, studentId) => axiosClient.delete(`/classes/${classId}/students/${studentId}`),
+    addStudentsToClass: (classId, studentIds) => axiosClient.post("/admin/add-students-to-class", { classId, studentIds }),
+    getMyClass: () => axiosClient.get("/classes/my-class"),
 };
 
 export default classApi;
