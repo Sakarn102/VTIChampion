@@ -30,8 +30,8 @@ const AdminLayout = () => {
   
   const menuItems = [
     { path: '/admin/dashboard', icon: <AppstoreOutlined />, label: 'Dashboard' },
-    { path: '/admin/users', icon: <UserOutlined />, label: 'Users' },
-    { path: '/admin/classes', icon: <TeamOutlined />, label: 'Classes' },
+    { path: '/admin/users', icon: <UserOutlined />, label: 'Quản lý tài khoản' },
+    { path: '/admin/classes', icon: <TeamOutlined />, label: 'Quản lý lớp học' },
     { path: '/admin/exams', icon: <FileTextOutlined />, label: 'Exams' },
     { path: '/admin/questions', icon: <QuestionCircleOutlined />, label: 'Questions' },
     { path: '/admin/results', icon: <BarChartOutlined />, label: 'Results' },
@@ -85,10 +85,7 @@ const AdminLayout = () => {
                className="mobile-header-toggle" 
                onClick={() => setMobileOpen(true)} 
             />
-            <div className="admin-header-search">
-              <SearchOutlined />
-              <input type="text" placeholder="Tìm kiếm trang, người dùng, bài thi..." />
-            </div>
+           
           </div>
           
           <div className="admin-header-right">

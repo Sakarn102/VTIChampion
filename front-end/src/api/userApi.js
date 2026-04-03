@@ -27,8 +27,12 @@ const userApi = {
       params: { active: isActive }
     });
   },
-  update: (id, data) => {
-    return axiosClient.put(`/users/${id}`, data);
+  update: (id, formData) => {
+    return axiosClient.put(`/users/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   }
 };
 

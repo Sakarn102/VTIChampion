@@ -651,3 +651,83 @@
 .exam-mgt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .exam-mgt-input-number { width: 100%; }
 .exam-mgt-form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 32px; }
+
+/* Premium Modal Enhancements */
+.premium-modal .ant-modal-content {
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  padding: 0;
+}
+
+.premium-modal .ant-modal-header {
+  padding: 24px 32px;
+  margin-bottom: 0;
+  border-bottom: 1px solid #f1f5f9;
+  background: #f8fafc;
+}
+
+.premium-modal .ant-modal-title {
+  font-family: 'Inter', sans-serif;
+  color: #0f172a;
+}
+
+.premium-modal .ant-modal-body {
+  padding: 32px;
+}
+
+.premium-modal .ant-modal-close {
+  top: 16px;
+  right: 16px;
+}
+
+.premium-modal .ant-form-item-label label {
+  font-weight: 700;
+  color: #475569;
+  font-size: 14px;
+}
+
+.premium-modal .ant-input, 
+.premium-modal .ant-input-password,
+.premium-modal .ant-select-selector {
+  border-radius: 12px !important;
+  border: 1.5px solid #e2e8f0 !important;
+  padding: 8px 16px !important;
+  font-weight: 500;
+}
+
+.premium-modal .ant-input:focus,
+.premium-modal .ant-select-focused .ant-select-selector {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Base style for confirmation dialogs */
+.ant-modal-confirm-premium .ant-modal-content {
+  border-radius: 20px !important;
+  padding: 32px !important;
+}
+
+.ant-modal-confirm-premium .ant-modal-confirm-title {
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+}
+
+.ant-modal-confirm-premium .ant-modal-confirm-content {
+  margin-top: 12px !important;
+  color: #64748b !important;
+  font-size: 15px !important;
+}
+
+.ant-modal-confirm-premium .ant-modal-confirm-btns {
+  margin-top: 32px !important;
+}
+
+.ant-modal-confirm-premium .ant-btn {
+  height: 48px !important;
+  padding: 0 24px !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+}

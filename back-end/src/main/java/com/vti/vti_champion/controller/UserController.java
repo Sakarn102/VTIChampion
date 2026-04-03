@@ -50,18 +50,16 @@ public class UserController {
         settingResponse.setName(user.getRole().getName().toString());
         userResponse.setRole(settingResponse);
 
-        return  ResponseEntity.ok(Map.of(
+        return ResponseEntity.ok(Map.of(
                 "message", "Get thông tin user thành công",
-                "data", userResponse
-        ));
+                "data", userResponse));
     }
 
     @PutMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateMe(
             Authentication authentication,
             @Valid @RequestPart(value = "data", required = false) UpdateUserRequest request,
-            @RequestPart(value = "avatar", required = false) MultipartFile avatar)
-    {
+            @RequestPart(value = "avatar", required = false) MultipartFile avatar) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -73,8 +71,21 @@ public class UserController {
 
         return ResponseEntity.ok(Map.of(
                 "message", "Updated Successfully!",
-                "data", updatedUser
-        ));
+                "data", updatedUser));
+    }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    //@PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> updateUser(
+            @PathVariable Integer id,
+            @Valid @RequestPart(value = "data", required = false) UpdateUserRequest request,
+            @RequestPart(value = "avatar", required = false) MultipartFile avatar) {
+
+        User updatedUser = userService.updateMe(id, request, avatar);
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Cập nhật người dùng thành công",
+                "data", updatedUser));
     }
 
     @GetMapping
@@ -95,6 +106,13 @@ public class UserController {
         }
 
         return new ResponseEntity<>(students, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    //@PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok(Map.of("message", "Xóa người dùng thành công!"));
     }
 
 }

@@ -26,7 +26,7 @@ public class CustomUserDetails implements UserDetails {
     private boolean enabled;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public CustomUserDetails(User  user) {
+    public CustomUserDetails(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
@@ -35,8 +35,7 @@ public class CustomUserDetails implements UserDetails {
         this.password = user.getPassword();
         this.isActive = user.getIsActive();
         this.authorities = List.of(new SimpleGrantedAuthority(
-                "ROLE_" + user.getRole().getName().toUpperCase().trim())
-        );
+                "ROLE_" + user.getRole().getName().toUpperCase().trim()));
     }
 
     // Method cua userdetail
