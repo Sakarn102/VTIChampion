@@ -3,6 +3,7 @@ package com.vti.vti_champion.controller;
 import com.sun.security.auth.UserPrincipal;
 import com.vti.vti_champion.configuration.CustomUserDetails;
 import com.vti.vti_champion.dto.request.CreateQuestionRequest;
+import com.vti.vti_champion.dto.request.FilterQuestionRequest;
 import com.vti.vti_champion.dto.request.UpdateQuestionRequest;
 import com.vti.vti_champion.dto.response.ImportResponse;
 import com.vti.vti_champion.dto.response.PracticeQuestionResponse;
@@ -36,8 +37,7 @@ public class QuestionController {
     @GetMapping("/my-questions")
     public ResponseEntity<?> getQuestionsByTeacher(
             Authentication authentication,
-            Pageable pageable)
-    {
+            Pageable pageable) {
         // Lấy ID của Giáo viên đang đăng nhập từ Token
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
@@ -52,8 +52,7 @@ public class QuestionController {
     public ResponseEntity<?> createQuestionByTeacher(
             Authentication authentication,
             @RequestBody CreateQuestionRequest request
-    )
-    {
+    ) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         QuestionResponse saved = questionService.createQuestionByTeacher(userDetails.getId(), request);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
@@ -64,9 +63,8 @@ public class QuestionController {
             @PathVariable Integer id,
             Authentication authentication,
             @RequestBody UpdateQuestionRequest request
-    )
-    {
-        CustomUserDetails userDetails =  (CustomUserDetails) authentication.getPrincipal();
+    ) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer currentTeacherid = userDetails.getId();
 
         Question updatedQuestion = questionService.updateQuestionByTeacher(id, currentTeacherid, request);
@@ -103,8 +101,7 @@ public class QuestionController {
     public ResponseEntity<?> importQuestions(
             @RequestParam("file") MultipartFile file,
             @RequestParam("examId") Integer examId,
-            Authentication authentication)
-    {
+            Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer currentTeacherid = userDetails.getId();
 
@@ -124,4 +121,14 @@ public class QuestionController {
                 .body(fileContent);
     }
 
+    @GetMapping("/get-all/filter")
+    public ResponseEntity<?> getAllQuestions(
+            FilterQuestionRequest request,
+            Pageable pageable
+    ) {
+        Page<QuestionResponse> result = questionService.getAllQuestions(request, pageable);
+        return ResponseEntity.ok(result);
+    }
+
 }
+

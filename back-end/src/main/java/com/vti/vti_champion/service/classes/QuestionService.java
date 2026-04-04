@@ -2,6 +2,7 @@ package com.vti.vti_champion.service.classes;
 
 import com.vti.vti_champion.constant.DifficultyLevel;
 import com.vti.vti_champion.dto.request.CreateQuestionRequest;
+import com.vti.vti_champion.dto.request.FilterQuestionRequest;
 import com.vti.vti_champion.dto.request.UpdateQuestionRequest;
 import com.vti.vti_champion.dto.response.AnswerResponse;
 import com.vti.vti_champion.dto.response.ImportResponse;
@@ -16,6 +17,7 @@ import com.vti.vti_champion.repository.ExamRepository;
 import com.vti.vti_champion.repository.QuestionRepository;
 import com.vti.vti_champion.repository.UserRepository;
 import com.vti.vti_champion.service.interfaces.IQuestionService;
+import com.vti.vti_champion.specification.QuestionSpecification;
 import com.vti.vti_champion.utils.XLSXUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
@@ -26,6 +28,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -275,5 +278,16 @@ public class QuestionService implements IQuestionService {
         } catch (IOException e) {
             throw new RuntimeException("Loi tao file mau ", e);
         }
+    }
+
+    @Override
+    public Page<QuestionResponse> getAllQuestions(FilterQuestionRequest request, Pageable pageable) {
+        Specification<Question> spec = QuestionSpecification.filter(request);
+
+        return questionRepository.findAll(spec, pageable).map(question -> {
+            QuestionResponse response = modelMapper.map(question, QuestionResponse.class);
+
+            return response;
+        });
     }
 }

@@ -1,6 +1,7 @@
 package com.vti.vti_champion.service.interfaces;
 
 import com.vti.vti_champion.dto.request.CreateQuestionRequest;
+import com.vti.vti_champion.dto.request.FilterQuestionRequest;
 import com.vti.vti_champion.dto.request.UpdateQuestionRequest;
 import com.vti.vti_champion.dto.response.ImportResponse;
 import com.vti.vti_champion.dto.response.PracticeQuestionResponse;
@@ -13,9 +14,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface IQuestionService {
+
     Page<QuestionResponse> getQuestionsByTeacher(Integer teacherId, Pageable pageable);
+
     QuestionResponse createQuestionByTeacher(Integer teacherId, CreateQuestionRequest request);
+
     Question updateQuestionByTeacher(Integer questionId, Integer currentTeacherId, UpdateQuestionRequest request);
+
     void deleteQuestionByTeacher(Integer questionId, Integer currentTeacherId);
 
     //
@@ -26,4 +31,6 @@ public interface IQuestionService {
 
     //
     byte[] downloadTemplate();
+
+    Page<QuestionResponse> getAllQuestions(FilterQuestionRequest request, Pageable pageable);
 }

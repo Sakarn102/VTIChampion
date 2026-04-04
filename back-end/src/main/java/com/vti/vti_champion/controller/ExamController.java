@@ -43,6 +43,7 @@ public class ExamController {
 
             Pageable pageable
     ) {
+
         Page<ExamResponse> response = examService.getAllExams(keyword, classId, teacherId, startDate, endDate, pageable);
         return ResponseEntity.ok(response);
     }
