@@ -12,7 +12,7 @@ public class CreateExamRequest {
     @NotNull(message = "Code cannot be null!")
     private String code;
 
-    @NotBlank(message = "Title cannot be null!") //@NotBlank chỉ dùng cho String
+    @NotBlank(message = "Title cannot be null!") // @NotBlank chỉ dùng cho String
     @Size(max = 200)
     private String title;
 
@@ -27,6 +27,10 @@ public class CreateExamRequest {
     @NotNull(message = "ID ngươì tạo (creator_id) cannot be null!")
     private Integer creatorId;
 
-    @NotEmpty(message = "Vui lòng chọn ít nhất 1 câu hỏi trong ngân hàng đề thi") // Xác thực dữ liệu đầu vào
+    @NotNull(message = "Loại đề thi không được để trống!")
+    private String type;
+
+    private Integer maxAttempts = 1; // Mặc định 1 lần
+
     private List<Integer> questionIds;
 }

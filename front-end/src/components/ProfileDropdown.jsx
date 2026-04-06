@@ -22,6 +22,7 @@ const ProfileDropdown = ({ children }) => {
 
   const handleLogout = () => {
     logout();
+   
   };
 
   const goToProfile = () => {

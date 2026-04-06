@@ -28,9 +28,9 @@ public class AdminController {
 
     @GetMapping("/get-all-teacher")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getAllTeacher(Pageable  pageable) {
+    public ResponseEntity<?> getAllTeacher(Pageable pageable) {
         Page<AdminUserResponse> users = adminService.getAllTeachers(pageable);
-        return  ResponseEntity.ok(users);
+        return ResponseEntity.ok(users);
     }
 
     @PostMapping("/create-teacher")
@@ -40,12 +40,19 @@ public class AdminController {
         return ResponseEntity.ok(result);
     }
 
+    @PostMapping("/create-account")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> createAccount(@Valid @RequestBody CreateUserRequest request) {
+        AdminUserResponse result = adminService.createAccount(request);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/get-all-class")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<ClassResponse>> getAllClasses(ClassFilterRequest request, Pageable pageable) {
         Page<ClassResponse> classes = adminService.getAllClasses(request, pageable);
 
-        return  ResponseEntity.ok(classes);
+        return ResponseEntity.ok(classes);
     }
 
     @PostMapping("/create-class")
@@ -78,8 +85,28 @@ public class AdminController {
         adminService.toggleClassStatus(id, status);
 
         String message = (status != null && status) ? "Đã mở khóa lớp học" : "Đã khóa lớp học";
-        if (status == null) message = "Đã thay đổi trạng thái lớp học";
+        if (status == null)
+            message = "Đã thay đổi trạng thái lớp học";
 
         return ResponseEntity.ok(message);
+    }
+
+    @GetMapping("/settings/type/{typeId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getSettingsByType(@PathVariable Integer typeId) {
+        return ResponseEntity.ok(adminService.getSettingsByType(typeId));
+    }
+
+    @DeleteMapping("/delete-class/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteClass(@PathVariable Integer id) {
+        adminService.deleteClass(id);
+        return ResponseEntity.ok(java.util.Map.of("message", "Xóa lớp học thành công!"));
+    }
+
+    @GetMapping("/unassigned-students")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getUnassignedStudents() {
+        return ResponseEntity.ok(adminService.getUnassignedStudents());
     }
 }

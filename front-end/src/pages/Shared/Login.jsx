@@ -16,6 +16,16 @@ export default function Login() {
     setLoading(true);
     try {
       const res = await authApi.login(values);
+      
+      // Handle TRUONG HOP CHUA XAC THUC OTP (mustVerify: true)
+      if (res && res.mustVerify) {
+        message.warning("Tài Khoản của bạn chưa được kích hoạt. Đang chuyển hướng xác nhận...");
+        setTimeout(() => {
+          navigate("/verify-otp", { state: { email: res.email } });
+        }, 1500);
+        return;
+      }
+
       if (res && res.accessToken) {
         // Lưu token vào localStorage (cho axiosClient)
         localStorage.setItem("token", res.accessToken);
@@ -25,17 +35,32 @@ export default function Login() {
 
         // Lấy profile thật từ DB để biết chính xác Role
         const profileRes = await userApi.getProfile();
-        const userData = profileRes.data || profileRes;
+        // Backend trả về { message: '...', data: { id, role: {name: 'Admin'}, ... } }
+        // axiosClient interceptor đã bóc response.data rồi, nên profileRes = { message, data }
+        const userData = profileRes?.data || profileRes;
+        console.log('[Login] Raw profileRes:', profileRes);
+        console.log('[Login] userData:', userData);
 
         // Save to AuthContext
         login(userData, res.accessToken);
 
         message.success("Đăng nhập thành công!");
         
+        let role = userData.role;
+        if (role && typeof role === 'object') {
+          role = role.name || role.authority || 'STUDENT';
+        }
+        if (typeof role === 'string') {
+          role = role.toUpperCase().replace('ROLE_', '');
+          if (role !== "ADMIN" && role !== "TEACHER" && role !== "STUDENT") {
+            role = "STUDENT";
+          }
+        }
+        
         // Điều hướng trực tiếp dựa theo Role
-        if (userData.role === "TEACHER") {
+        if (role === "TEACHER") {
           navigate("/teacher/dashboard");
-        } else if (userData.role === "ADMIN") {
+        } else if (role === "ADMIN") {
           navigate("/admin/dashboard");
         } else {
           navigate("/student/dashboard");
@@ -138,9 +163,9 @@ export default function Login() {
               Đăng nhập ngay
             </Button>
 
-            <div className="register-link">
+            {/* <div className="register-link">
               <a onClick={() => navigate("/register")}>Đăng ký ngay</a>
-            </div>
+            </div> */}
 
           </Form>
         </div>

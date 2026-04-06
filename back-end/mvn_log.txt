@@ -1,0 +1,76 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.example:back-end:jar:0.0.1-SNAPSHOT
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: io.github.cdimascio:dotenv-java:jar -> duplicate declaration of version 3.0.0 @ line 156, column 21
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] 
+[INFO] ------------------------< org.example:back-end >------------------------
+[INFO] Building back-end 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.5.0:clean (default-clean) @ back-end ---
+[INFO] Deleting D:\VTI.Academy\Module7_Mock_Project\back-end\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ back-end ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ back-end ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 108 source files with javac [debug parameters release 21] to target\classes
+[INFO] /D:/VTI.Academy/Module7_Mock_Project/back-end/src/main/java/com/vti/vti_champion/specification/ClassSpecifications.java: Some input files use or override a deprecated API.
+[INFO] /D:/VTI.Academy/Module7_Mock_Project/back-end/src/main/java/com/vti/vti_champion/specification/ClassSpecifications.java: Recompile with -Xlint:deprecation for details.
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/VTI.Academy/Module7_Mock_Project/back-end/src/main/java/com/vti/vti_champion/service/classes/ExamService.java:[65,21] cannot find symbol
+  symbol:   method setMaxAttempts(int)
+  location: variable exam of type com.vti.vti_champion.entity.Exam
+[ERROR] /D:/VTI.Academy/Module7_Mock_Project/back-end/src/main/java/com/vti/vti_champion/service/classes/ExamService.java:[67,21] cannot find symbol
+  symbol:   method setMaxAttempts(int)
+  location: variable exam of type com.vti.vti_champion.entity.Exam
+[ERROR] /D:/VTI.Academy/Module7_Mock_Project/back-end/src/main/java/com/vti/vti_champion/service/classes/ExamService.java:[71,17] cannot find symbol
+  symbol:   method setMaxAttempts(int)
+  location: variable exam of type com.vti.vti_champion.entity.Exam
+[ERROR] /D:/VTI.Academy/Module7_Mock_Project/back-end/src/main/java/com/vti/vti_champion/service/classes/ExamService.java:[206,21] cannot find symbol
+  symbol:   method setMaxAttempts(int)
+  location: variable exam of type com.vti.vti_champion.entity.Exam
+[ERROR] /D:/VTI.Academy/Module7_Mock_Project/back-end/src/main/java/com/vti/vti_champion/service/classes/ExamService.java:[208,21] cannot find symbol
+  symbol:   method setMaxAttempts(int)
+  location: variable exam of type com.vti.vti_champion.entity.Exam
+[INFO] 5 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  25.371 s
+[INFO] Finished at: 2026-04-05T13:28:26+07:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.14.1:compile (default-compile) on project back-end: Compilation failure: Compilation failure: 
+[ERROR] /D:/VTI.Academy/Module7_Mock_Project/back-end/src/main/java/com/vti/vti_champion/service/classes/ExamService.java:[65,21] cannot find symbol
+[ERROR]   symbol:   method setMaxAttempts(int)
+[ERROR]   location: variable exam of type com.vti.vti_champion.entity.Exam
+[ERROR] /D:/VTI.Academy/Module7_Mock_Project/back-end/src/main/java/com/vti/vti_champion/service/classes/ExamService.java:[67,21] cannot find symbol
+[ERROR]   symbol:   method setMaxAttempts(int)
+[ERROR]   location: variable exam of type com.vti.vti_champion.entity.Exam
+[ERROR] /D:/VTI.Academy/Module7_Mock_Project/back-end/src/main/java/com/vti/vti_champion/service/classes/ExamService.java:[71,17] cannot find symbol
+[ERROR]   symbol:   method setMaxAttempts(int)
+[ERROR]   location: variable exam of type com.vti.vti_champion.entity.Exam
+[ERROR] /D:/VTI.Academy/Module7_Mock_Project/back-end/src/main/java/com/vti/vti_champion/service/classes/ExamService.java:[206,21] cannot find symbol
+[ERROR]   symbol:   method setMaxAttempts(int)
+[ERROR]   location: variable exam of type com.vti.vti_champion.entity.Exam
+[ERROR] /D:/VTI.Academy/Module7_Mock_Project/back-end/src/main/java/com/vti/vti_champion/service/classes/ExamService.java:[208,21] cannot find symbol
+[ERROR]   symbol:   method setMaxAttempts(int)
+[ERROR]   location: variable exam of type com.vti.vti_champion.entity.Exam
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

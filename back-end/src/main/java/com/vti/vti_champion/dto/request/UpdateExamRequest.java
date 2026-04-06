@@ -22,6 +22,10 @@ public class UpdateExamRequest {
     @NotNull(message = "ID lớp học (class_id) không được để trống")
     private Integer classId;
 
-    @NotEmpty(message = "Vui lòng chọn ít nhất 1 câu hỏi trong ngân hàng đề thi")
+    @NotNull(message = "Loại đề thi không được để trống!")
+    private String type;
+
+    private Integer maxAttempts; // Số lần tối đa, null = không giới hạn
+
     private List<Integer> questionIds;
 }

@@ -30,7 +30,7 @@ axiosClient.interceptors.response.use(
     const message =
       error.response?.data?.message ||
       error.response?.data ||
-      "Lỗi hệ thống, vui lnogf thử lại!";
+      "Lỗi hệ thống, vui lòng thử lại!";
 
     if (error.response?.status === 401) {
       localStorage.removeItem("token");

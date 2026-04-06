@@ -4,7 +4,6 @@ import {
   FileTextOutlined, 
   PlusCircleOutlined, 
   QuestionCircleOutlined,
-  BellOutlined, 
   SearchOutlined,
   MenuOutlined,
   CloseOutlined,
@@ -30,6 +29,7 @@ const TeacherLayout = () => {
     { path: '/teacher/dashboard', icon: <AppstoreOutlined />, label: 'Dashboard' },
     { path: '/teacher/exams', icon: <FileTextOutlined />, label: 'Quản lý Đề thi' },
     { path: '/teacher/students', icon: <TeamOutlined />, label: 'Quản lý lớp học' },
+    { path: '/teacher/questions', icon: <QuestionCircleOutlined />, label: 'Ngân hàng câu hỏi' },
     { path: '/teacher/help', icon: <QuestionCircleOutlined />, label: 'Trung tâm hỗ trợ' },
   ];
 
@@ -84,10 +84,7 @@ const TeacherLayout = () => {
           </div>
           
           <div className="admin-header-right">
-            <div className="admin-notification" onClick={() => navigate('/teacher/notifications')}>
-              <BellOutlined style={{ fontSize: '20px' }} />
-              <span className="badge">5</span>
-            </div>
+            {/* Notification removed */}
             
             <ProfileDropdown>
                <div className="user-avatar">

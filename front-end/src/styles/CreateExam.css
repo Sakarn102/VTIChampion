@@ -190,6 +190,66 @@
   to { transform: translateX(0); opacity: 1; }
 }
 
+/* Biểu tượng động quay vòng */
+.spin-slow {
+  animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Nút Excel màu xanh lá */
+.btn-excel-template {
+  background: #f0fdf4 !important;
+  color: #16a34a !important;
+  border: 1.5px solid #bbf7d0 !important;
+  padding: 8px 16px !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-excel-template:hover {
+  background: #dcfce7 !important;
+  border-color: #86efac !important;
+  transform: translateY(-1px);
+}
+
+.btn-excel-upload {
+  background: #16a34a !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 18px !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+}
+
+.btn-excel-upload:hover {
+  background: #15803d !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(22, 163, 74, 0.3);
+}
+
+.btn-excel-upload:disabled {
+  background: #86efac !important;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 768px) {
   .create-exam-title {

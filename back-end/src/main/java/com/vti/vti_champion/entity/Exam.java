@@ -36,6 +36,9 @@ public class Exam {
     @Enumerated(EnumType.STRING)
     private Type type = Type.Test;
 
+    @Column(name = "max_attempts", columnDefinition = "int default 1")
+    private Integer maxAttempts = 1;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id")
     private User teacher;

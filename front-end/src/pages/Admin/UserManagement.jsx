@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Table, Button, Input, Select, Modal, Form, message, Tooltip } from "antd";
+import { Table, Button, Input, Select, Modal, Form, message, Tooltip, Avatar, Upload, Switch } from "antd";
 import {
   PlusOutlined,
   LockOutlined,
@@ -10,17 +10,24 @@ import {
   UserOutlined,
   TeamOutlined,
   IdcardOutlined,
-  EyeOutlined,
   FilterOutlined,
   SafetyCertificateOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import "../../styles/Admin.css";
 import userApi from "../../api/userApi";
+import adminApi from "../../api/adminApi";
 
 const { Option } = Select;
 
 const UserManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [form] = Form.useForm();
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [roleFilter, setRoleFilter] = useState("ALL");
@@ -36,7 +43,7 @@ const UserManagement = () => {
 
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 6,
     total: 0,
   });
 
@@ -48,15 +55,41 @@ const UserManagement = () => {
         size: 1000, 
       });
       
-      const data = res.content || res.data || [];
+      console.log("API Response:", res); // Debug log (visible if devtools open)
+
+      // Robust data extraction
+      let rawContent = [];
+      let total = 0;
+
+      if (res) {
+        if (Array.isArray(res)) {
+          rawContent = res;
+        } else if (res.content && Array.isArray(res.content)) {
+          rawContent = res.content;
+          total = res.totalElements || res.content.length;
+        } else if (res.data && res.data.content && Array.isArray(res.data.content)) {
+          rawContent = res.data.content;
+          total = res.data.totalElements || res.data.content.length;
+        } else if (res.data && Array.isArray(res.data)) {
+          rawContent = res.data;
+        }
+      }
+
+      const data = rawContent || [];
       setUsers(data);
+      setPagination(prev => ({
+        ...prev,
+        total: total || data.length
+      }));
       
-      // Frontend-side counting based on roles
+      // Counting logic
       const counts = data.reduce((acc, user) => {
-        const r = (user.role?.name || user.role || "").toUpperCase();
-        if (r === "ADMIN") acc.admins++;
-        else if (r === "TEACHER") acc.teachers++;
-        else if (r === "STUDENT") acc.students++;
+        const roleObj = user.role;
+        const roleName = (typeof roleObj === 'string' ? roleObj : roleObj?.name || "").toUpperCase();
+        
+        if (roleName === "ADMIN") acc.admins++;
+        else if (roleName === "TEACHER") acc.teachers++;
+        else if (roleName === "STUDENT") acc.students++;
         return acc;
       }, { admins: 0, teachers: 0, students: 0 });
 
@@ -68,6 +101,7 @@ const UserManagement = () => {
       });
     } catch (error) {
       console.error("Lỗi fetch users:", error);
+      message.error("Lỗi: " + (typeof error === 'string' ? error : "Không thể tải danh sách người dùng!"));
     } finally {
       setLoading(false);
     }
@@ -129,17 +163,25 @@ const UserManagement = () => {
   const handleDelete = async (id) => {
     Modal.confirm({
       title: "Xóa người dùng",
-      content: "Thao tác này không thể hoàn tác. Bạn có chắc chắn?",
-      okText: "Xóa",
+      content: (
+        <div style={{ marginTop: "12px" }}>
+          Thao tác này <b>không thể hoàn tác</b>. <br/>
+          Bạn có chắc chắn muốn xóa người dùng này khỏi hệ thống?
+        </div>
+      ),
+      icon: <DeleteOutlined style={{ color: "#ef4444" }} />,
+      okText: "Xóa vĩnh viễn",
       okType: "danger",
       cancelText: "Hủy",
+      className: "ant-modal-confirm-premium",
+      centered: true,
       onOk: async () => {
         try {
           await userApi.delete(id);
-          message.success("Đã xóa người dùng!");
-          fetchUsers(); // Re-fetch after delete
+          message.success("Đã xóa người dùng thành công!");
+          fetchUsers();
         } catch (error) {
-          message.error("Lỗi khi xóa!");
+          message.error("Lỗi khi xóa người dùng!");
         }
       },
     });
@@ -148,26 +190,26 @@ const UserManagement = () => {
   const handleToggleStatus = (record) => {
     const actionText = record.isActive ? "khóa" : "mở khóa";
     Modal.confirm({
-      title: <span style={{ fontWeight: 800 }}>Xác nhận {actionText} tài khoản</span>,
+      title: `Xác nhận ${actionText} tài khoản`,
       icon: record.isActive ? <LockOutlined style={{ color: "#f59e0b" }} /> : <UnlockOutlined style={{ color: "#10b981" }} />,
       content: (
-        <div style={{ marginTop: "8px" }}>
+        <div style={{ marginTop: "12px" }}>
           Bạn có chắc chắn muốn <b>{actionText}</b> người dùng <b>{record.username}</b>? 
-          {record.isActive ? " Người dùng này sẽ không thể đăng nhập vào hệ thống sau khi bị khóa." : " Người dùng này sẽ có thể truy cập lại hệ thống bình thường."}
+          {record.isActive ? 
+            " Người dùng này sẽ không thể đăng nhập vào hệ thống sau khi bị khóa." : 
+            " Người dùng này sẽ có thể truy cập lại hệ thống bình thường."}
         </div>
       ),
       okText: record.isActive ? "Khóa tài khoản" : "Mở khóa",
       okType: record.isActive ? "danger" : "primary",
       cancelText: "Hủy",
       centered: true,
+      className: "ant-modal-confirm-premium",
       onOk: async () => {
         try {
-          // Use the correct specific API for toggling status
           await userApi.toggleStatus(record.id, !record.isActive);
+          message.success(`Đã ${actionText} tài khoản thành công!`);
           
-          message.success(`Đã ${actionText} thành công!`);
-          
-          // Update local state for instant feedback
           setUsers(prev => prev.map(u => 
             u.id === record.id ? { ...u, isActive: !u.isActive } : u
           ));
@@ -177,6 +219,97 @@ const UserManagement = () => {
         }
       },
     });
+  };
+
+  const handleOpenAdd = () => {
+    setEditingUser(null);
+    form.resetFields();
+    setAvatarFile(null);
+    setAvatarPreview(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (user) => {
+    // Determine the numeric ID for the role
+    let currentRoleId = user.role?.id;
+    if (!currentRoleId && user.role) {
+      const name = (typeof user.role === 'string' ? user.role : user.role.name || "").toUpperCase();
+      if (name === "ADMIN") currentRoleId = 3;
+      else if (name === "STUDENT") currentRoleId = 4;
+      else if (name === "TEACHER") currentRoleId = 5;
+    }
+
+    setEditingUser(user);
+    form.setFieldsValue({
+      username: user.username,
+      fullname: user.fullname,
+      email: user.email,
+      role: currentRoleId || 4, // Default to STUDENT (4) if not found
+    });
+    setAvatarPreview(user.avatarUrl);
+    setAvatarFile(null);
+    setIsModalOpen(true);
+  };
+
+  const onFinish = async (values) => {
+    try {
+      setSubmitting(true);
+      if (editingUser) {
+        const formData = new FormData();
+        
+        // Map string role to ID if form uses names or keep as is if it uses IDs
+        const payload = {
+          fullName: values.fullname,
+          email: values.email,
+          roleId: values.role, // values.role is ID
+          status: editingUser.isActive // Stay as is
+        };
+        
+        formData.append("data", new Blob([JSON.stringify(payload)], { type: "application/json" }));
+        if (avatarFile) {
+          formData.append("avatar", avatarFile);
+        }
+        await userApi.update(editingUser.id, formData);
+        message.success("Cập nhật thông tin thành công!");
+      } else {
+        // CALL API TAO TAI KHOAN MOI
+        const payload = {
+          username: values.username,
+          fullName: values.fullname,
+          email: values.email,
+          password: values.password,
+          roleId: values.role // values.role is ID (3, 4, 5)
+        };
+        await adminApi.createAccount(payload);
+        message.success("Tạo tài khoản thành công! Mã xác thực đã được gửi đến email của thành viên mới.");
+      }
+      setIsModalOpen(false);
+      fetchUsers();
+    } catch (error) {
+      console.error(error);
+      message.error("Có lỗi xảy ra, vui lòng thử lại!");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const beforeUpload = (file) => {
+    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/webp";
+    if (!isJpgOrPng) {
+      message.error("Bạn chỉ có thể tải lên file JPG/PNG/WebP!");
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error("Kích thước ảnh phải nhỏ hơn 2MB!");
+    }
+    
+    if (isJpgOrPng && isLt2M) {
+      setAvatarFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => setAvatarPreview(e.target.result);
+      reader.readAsDataURL(file);
+    }
+    return false; // Prevent automatic upload
   };
 
   const columns = [
@@ -206,8 +339,8 @@ const UserManagement = () => {
             )}
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <span style={{ fontWeight: 700, color: "#1e293b", fontSize: "14px" }}>{record.username}</span>
-            <span style={{ fontSize: "12px", color: "#64748b" }}>ID: {record.id}</span>
+            <span style={{ fontWeight: 700, color: "#1e293b", fontSize: "14px" }}>{record.fullname || record.username}</span>
+            <span style={{ fontSize: "12px", color: "#64748b" }}>Email: {record.email}</span>
           </div>
         </div>
       ),
@@ -225,13 +358,18 @@ const UserManagement = () => {
         const roleName = (role?.name || role || "STUDENT").toUpperCase();
         let color = "#3b82f6";
         let bg = "#eff6ff";
+        let displayLabel = "Student";
+        
         if (roleName === "ADMIN") {
           color = "#9333ea";
           bg = "#f3e8ff";
+          displayLabel = "Admin";
         } else if (roleName === "TEACHER") {
           color = "#ca8a04";
           bg = "#fef9c3";
+          displayLabel = "Teacher";
         }
+
         return (
           <span
             style={{
@@ -243,7 +381,7 @@ const UserManagement = () => {
               fontWeight: 800,
             }}
           >
-            {roleName}
+            {displayLabel}
           </span>
         );
       },
@@ -264,13 +402,8 @@ const UserManagement = () => {
       align: "center",
       render: (_, record) => (
         <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-          <Tooltip title="Xem chi tiết">
-            <button className="action-btn-custom">
-              <EyeOutlined />
-            </button>
-          </Tooltip>
           <Tooltip title="Chỉnh sửa">
-            <button className="action-btn-custom">
+            <button className="action-btn-custom" onClick={() => handleOpenEdit(record)}>
               <EditOutlined />
             </button>
           </Tooltip>
@@ -298,7 +431,7 @@ const UserManagement = () => {
         </div>
         <button
           className="admin-btn-primary"
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleOpenAdd}
           style={{ height: "48px", padding: "0 24px" }}
         >
           <PlusOutlined /> Thêm thành viên mới
@@ -391,7 +524,7 @@ const UserManagement = () => {
           pagination={{
             ...pagination,
             className: "premium-pagination",
-            showSizeChanger: true,
+            showSizeChanger: false,
           }}
           onChange={(p) => setPagination(p)}
         />
@@ -399,24 +532,82 @@ const UserManagement = () => {
 
       <Modal
         title={
-          <span style={{ fontSize: "20px", fontWeight: 800 }}>
-            Thêm người dùng mới
-          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{ 
+              width: "40px", 
+              height: "40px", 
+              borderRadius: "10px", 
+              background: "linear-gradient(135deg, #1d4ed8, #3b82f6)", 
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: "center",
+              color: "white" 
+            }}>
+              {editingUser ? <EditOutlined /> : <PlusOutlined />}
+            </div>
+            <span style={{ fontSize: "20px", fontWeight: 800 }}>
+              {editingUser ? "Cập nhật thông tin" : "Thêm người dùng mới"}
+            </span>
+          </div>
         }
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={null}
         width={600}
+        className="premium-modal"
+        centered
       >
-        <Form layout="vertical" style={{ marginTop: "24px" }}>
+        <Form 
+          form={form}
+          layout="vertical" 
+          style={{ marginTop: "0px" }}
+          onFinish={onFinish}
+        >
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "24px" }}>
+            <div style={{ position: "relative" }}>
+              <Avatar 
+                size={100} 
+                src={avatarPreview} 
+                icon={<UserOutlined />}
+                style={{ border: "4px solid #eff6ff", boxShadow: "0 4px 10px rgba(0,0,0,0.1)" }}
+              />
+              <Upload
+                showUploadList={false}
+                beforeUpload={beforeUpload}
+                accept="image/*"
+              >
+                <Button 
+                  type="primary"
+                  shape="circle"
+                  icon={<UploadOutlined />}
+                  style={{ 
+                    position: "absolute", 
+                    bottom: 0, 
+                    right: 0,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.2)" 
+                  }}
+                />
+              </Upload>
+            </div>
+          </div>
+
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
             <Form.Item
               label="Tên đăng nhập"
               name="username"
               rules={[{ required: true, message: "Vui lòng nhập username" }]}
             >
-              <Input size="large" placeholder="Nhập username" />
+              <Input size="large" placeholder="Nhập username" disabled={!!editingUser} />
             </Form.Item>
+            <Form.Item
+              label="Họ và tên"
+              name="fullname"
+              rules={[{ required: true, message: "Vui lòng nhập họ tên" }]}
+            >
+              <Input size="large" placeholder="Nhập họ và tên đầy đủ" />
+            </Form.Item>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
             <Form.Item
               label="Email"
               name="email"
@@ -427,19 +618,19 @@ const UserManagement = () => {
             >
               <Input size="large" placeholder="Nhập địa chỉ email" />
             </Form.Item>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
             <Form.Item
               label="Vai trò (Role)"
               name="role"
               rules={[{ required: true, message: "Vui lòng chọn vai trò" }]}
             >
               <Select size="large" placeholder="Chọn vai trò">
-                <Option value="ADMIN">Admin</Option>
-                <Option value="TEACHER">Teacher</Option>
-                <Option value="STUDENT">Student</Option>
+                <Option value={3}>Admin</Option>
+                <Option value={5}>Teacher</Option>
+                <Option value={4}>Student</Option>
               </Select>
             </Form.Item>
+          </div>
+          {!editingUser && (
             <Form.Item
               label="Mật khẩu khởi tạo"
               name="password"
@@ -447,7 +638,7 @@ const UserManagement = () => {
             >
               <Input.Password size="large" placeholder="Nhập mật khẩu" />
             </Form.Item>
-          </div>
+          )}
           
           <div
             style={{
@@ -461,12 +652,19 @@ const UserManagement = () => {
               type="button"
               className="admin-btn-outline"
               onClick={() => setIsModalOpen(false)}
+              disabled={submitting}
             >
-              Hủy
+              Hủy bỏ
             </button>
-            <button type="submit" className="admin-btn-primary">
-              Tạo tài khoản
-            </button>
+            <Button 
+              type="primary" 
+              htmlType="submit" 
+              className="admin-btn-primary" 
+              loading={submitting}
+              style={{ height: "48px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}
+            >
+              {editingUser ? "Lưu thay đổi" : "Tạo tài khoản"}
+            </Button>
           </div>
         </Form>
       </Modal>

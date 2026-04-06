@@ -36,8 +36,7 @@ public class QuestionController {
     @GetMapping("/my-questions")
     public ResponseEntity<?> getQuestionsByTeacher(
             Authentication authentication,
-            Pageable pageable)
-    {
+            Pageable pageable) {
         // Lấy ID của Giáo viên đang đăng nhập từ Token
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
@@ -48,12 +47,17 @@ public class QuestionController {
         return ResponseEntity.ok(questions);
     }
 
+    @GetMapping("")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
+    public ResponseEntity<?> getAllQuestions(Pageable pageable) {
+        Page<QuestionResponse> questions = questionService.getAllQuestions(pageable);
+        return ResponseEntity.ok(questions);
+    }
+
     @PostMapping("/create-question")
     public ResponseEntity<?> createQuestionByTeacher(
             Authentication authentication,
-            @RequestBody CreateQuestionRequest request
-    )
-    {
+            @RequestBody CreateQuestionRequest request) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         QuestionResponse saved = questionService.createQuestionByTeacher(userDetails.getId(), request);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
@@ -63,10 +67,8 @@ public class QuestionController {
     public ResponseEntity<?> updateQuestionByTeacher(
             @PathVariable Integer id,
             Authentication authentication,
-            @RequestBody UpdateQuestionRequest request
-    )
-    {
-        CustomUserDetails userDetails =  (CustomUserDetails) authentication.getPrincipal();
+            @RequestBody UpdateQuestionRequest request) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer currentTeacherid = userDetails.getId();
 
         Question updatedQuestion = questionService.updateQuestionByTeacher(id, currentTeacherid, request);
@@ -103,8 +105,7 @@ public class QuestionController {
     public ResponseEntity<?> importQuestions(
             @RequestParam("file") MultipartFile file,
             @RequestParam("examId") Integer examId,
-            Authentication authentication)
-    {
+            Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer currentTeacherid = userDetails.getId();
 
@@ -120,7 +121,8 @@ public class QuestionController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=question_template.xlsx")
-                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentType(
+                        MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(fileContent);
     }
 

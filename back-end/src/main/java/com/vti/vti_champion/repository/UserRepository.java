@@ -26,4 +26,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query("select u from User u where u.role.name = :roleName")
     Page<User> findByTeacher(@Param("roleName") String roleName, Pageable pageable);
+
+    @Query("select u from User u where u.role.id = 4 and u.isActive = true and not exists " +
+           "(select c from Class c join c.students s where s.id = u.id)")
+    List<User> findStudentsWithoutClass();
+
+    @Query("SELECT u.role.name, COUNT(u) FROM User u GROUP BY u.role.name")
+    List<Object[]> countUsersByRole();
 }

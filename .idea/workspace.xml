@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6cfae33a-945d-4364-b048-7e4c14cc159d" name="Changes" comment="" />
+    <list default="true" id="6cfae33a-945d-4364-b048-7e4c14cc159d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/src/pages/Instructor/ClassDetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/pages/Instructor/ClassDetail.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/src/pages/Instructor/ExamList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/pages/Instructor/ExamList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/src/pages/Instructor/TeacherDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/pages/Instructor/TeacherDashboard.jsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,8 +19,15 @@
   <component name="CompilerWorkspaceConfiguration">
     <option name="MAKE_PROJECT_ON_SAVE" value="true" />
   </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="167" />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
@@ -32,27 +45,38 @@
     "RequestMappingsPanelOrder1": "1",
     "RequestMappingsPanelWidth0": "75",
     "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.Main.executor": "Run",
     "Spring Boot.op].executor": "Run",
-    "git-widget-placeholder": "an",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "ThanhTuan",
+    "ignore.preview.features.used": "true",
     "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/VTI.Academy/Module7_Mock_Project",
-    "project.structure.last.edited": "SDKs",
-    "project.structure.proportion": "0.0",
+    "last_opened_file_path": "D:/vscode/VTIChampion",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "run.code.analysis.last.selected.profile": "pProject Default",
     "settings.editor.selected.configurable": "project.propCompiler",
+    "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RunManager" selected="Spring Boot.Main">
     <configuration name="Main" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
-      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
       <module name="back-end" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.vti.vti_champion.Main" />
       <extension name="coverage">
@@ -67,7 +91,7 @@
     </configuration>
     <configuration name="op]" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
-      <module name="Module7_Mock_Project" />
+      <module name="back-end" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.vti.vti_champion.Main" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -95,6 +119,7 @@
       <option name="presentableId" value="Default" />
       <updated>1773406918899</updated>
       <workItem from="1773413997252" duration="176000" />
+      <workItem from="1774855558066" duration="2219000" />
     </task>
     <servers />
   </component>

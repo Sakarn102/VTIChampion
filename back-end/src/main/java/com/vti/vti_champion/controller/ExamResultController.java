@@ -31,6 +31,11 @@ public class ExamResultController {
         return ResponseEntity.ok(history);
     }
 
+    @GetMapping("/{resultId}")
+    public ResponseEntity<?> getResultDetail(@PathVariable Integer resultId) {
+        return ResponseEntity.ok(examResultService.getResultDetail(resultId));
+    }
+
     // Xem điểm số theo học viên
     @GetMapping("/teacher/student/{userId}")
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")

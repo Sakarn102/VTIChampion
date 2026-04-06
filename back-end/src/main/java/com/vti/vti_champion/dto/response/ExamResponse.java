@@ -24,7 +24,8 @@ public class ExamResponse {
     private String creatorName;
     private String className;
     private Integer classId;
-
+    private String type;
+    private Integer maxAttempts;
     private List<QuestionResponse> questions;
 
 }

@@ -12,7 +12,7 @@ export default function EditExam() {
   const [loading, setLoading] = useState(true);
   
   const [formData, setFormData] = useState({
-    title: '', code: '', duration: '', createDate: '', creatorName: '', className: '', questions: []
+    title: '', code: '', duration: '', type: 'Test', createDate: '', creatorName: '', className: '', questions: []
   });
 
   useEffect(() => {
@@ -26,6 +26,7 @@ export default function EditExam() {
             title: foundExam.title || '',
             code: foundExam.code || '',
             duration: foundExam.duration || '',
+            type: foundExam.type || 'Test',
             createDate: foundExam.createDate || '',
             creatorName: foundExam.creatorName || '',
             className: foundExam.className || '',
@@ -128,6 +129,18 @@ export default function EditExam() {
           <div>
             <label className="form-label">Lớp học</label>
             <input type="text" value={formData.className || "N/A"} disabled className="form-input form-input-disabled" />
+          </div>
+          <div>
+            <label className="form-label">Loại bài thi</label>
+            <select 
+              className="form-input"
+              value={formData.type}
+              onChange={(e) => setFormData({...formData, type: e.target.value})}
+              style={{ width: '100%' }}
+            >
+              <option value="Test">Đề thi (Test)</option>
+              <option value="Practice">Luyện tập (Practice)</option>
+            </select>
           </div>
         </div>
       </div>
