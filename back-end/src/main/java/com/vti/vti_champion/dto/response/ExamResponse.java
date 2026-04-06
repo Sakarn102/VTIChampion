@@ -25,7 +25,7 @@ public class ExamResponse {
     private String className;
     private Integer classId;
     private String type;
-
+    private Integer maxAttempts;
     private List<QuestionResponse> questions;
 
 }

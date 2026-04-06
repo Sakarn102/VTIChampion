@@ -13,6 +13,7 @@ public interface IAdminService {
     void toggleUserStatus(Integer userId, boolean status);
     Page<AdminUserResponse> getAllTeachers(Pageable pageable);
     AdminUserResponse createTeacher(CreateTeacherRequest request);
+    AdminUserResponse createAccount(CreateUserRequest request);
 
     Page<ClassResponse> getAllClasses(ClassFilterRequest request, Pageable pageable);
 

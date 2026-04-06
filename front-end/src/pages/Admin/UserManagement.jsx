@@ -16,6 +16,7 @@ import {
 } from "@ant-design/icons";
 import "../../styles/Admin.css";
 import userApi from "../../api/userApi";
+import adminApi from "../../api/adminApi";
 
 const { Option } = Select;
 
@@ -42,7 +43,7 @@ const UserManagement = () => {
 
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 6,
     total: 0,
   });
 
@@ -271,8 +272,16 @@ const UserManagement = () => {
         await userApi.update(editingUser.id, formData);
         message.success("Cập nhật thông tin thành công!");
       } else {
-        // Assume creation is still JSON or separate logic
-        // await userApi.create(values);
+        // CALL API TAO TAI KHOAN MOI
+        const payload = {
+          username: values.username,
+          fullName: values.fullname,
+          email: values.email,
+          password: values.password,
+          roleId: values.role // values.role is ID (3, 4, 5)
+        };
+        await adminApi.createAccount(payload);
+        message.success("Tạo tài khoản thành công! Mã xác thực đã được gửi đến email của thành viên mới.");
       }
       setIsModalOpen(false);
       fetchUsers();
@@ -515,7 +524,7 @@ const UserManagement = () => {
           pagination={{
             ...pagination,
             className: "premium-pagination",
-            showSizeChanger: true,
+            showSizeChanger: false,
           }}
           onChange={(p) => setPagination(p)}
         />

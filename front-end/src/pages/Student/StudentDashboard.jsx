@@ -13,7 +13,7 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import resultApi from "../../api/resultApi";
-import examApi from "../../api/ExamApi";
+import examApi from "../../api/examApi";
 import classApi from "../../api/classApi";
 import { useAuth } from "../../context/AuthContext";
 
@@ -105,10 +105,6 @@ export default function StudentDashboard() {
               <Title level={4} style={{ color: "white", margin: 0 }}>{myClass.teacherName}</Title>
             </div>
           )}
-          <div style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(10px)", padding: "16px 24px", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.2)" }}>
-            <Text style={{ color: "rgba(255,255,255,0.8)", display: "block", marginBottom: "4px" }}>Tổng thời gian học</Text>
-            <Title level={4} style={{ color: "white", margin: 0 }}>{examsCompleted * 45} <span style={{ fontSize: "14px", fontWeight: "normal" }}>phút</span></Title>
-          </div>
         </div>
       </div>
 

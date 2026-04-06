@@ -13,6 +13,7 @@ import {
   QuestionCircleOutlined
 } from "@ant-design/icons";
 import takeExamApi from "../../api/takeExamApi";
+import { FireOutlined } from "@ant-design/icons";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -28,6 +29,7 @@ export default function TakeExam() {
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [attemptsInfo, setAttemptsInfo] = useState(null);
 
   useEffect(() => {
     const initExam = async () => {
@@ -41,6 +43,12 @@ export default function TakeExam() {
         const questionsRes = await takeExamApi.getQuestions(examId);
         const questionData = questionsRes.data || questionsRes || [];
         setQuestions(questionData);
+
+        // Fetch thông tin lượt thi
+        try {
+          const attRes = await takeExamApi.checkAttempts(examId);
+          setAttemptsInfo(attRes.data || attRes);
+        } catch (e) { /* bỏ qua nếu lỗi */ }
 
         // Set duration from params or default to 60
         const durationMin = location.state?.duration || 60;
@@ -145,6 +153,16 @@ export default function TakeExam() {
              <Button icon={<LeftOutlined />} onClick={() => navigate(-1)}>Thoát</Button>
              <span style={{ marginLeft: '16px', fontWeight: 600, fontSize: '18px' }}>Đang thi: {currentIdx + 1} / {questions.length}</span>
              {location.state?.isPractice && <Tag color="green" style={{ marginLeft: '12px' }}>CHẾ ĐỘ LUYỆN TẬP</Tag>}
+             {/* Badge lượt thi */}
+             {attemptsInfo && !attemptsInfo.isPractice && (
+               <Tag
+                 icon={<FireOutlined />}
+                 color={attemptsInfo.remainingAttempts <= 1 ? 'red' : attemptsInfo.remainingAttempts <= 2 ? 'orange' : 'blue'}
+                 style={{ marginLeft: '12px', fontSize: '13px', padding: '2px 10px', borderRadius: '20px' }}
+               >
+                 Lượt này: {attemptsInfo.completedAttempts + 1} / {attemptsInfo.maxAttempts}
+               </Tag>
+             )}
           </Col>
           <Col xs={24} md={12} style={{ textAlign: 'right' }}>
             <Card bodyStyle={{ padding: '8px 20px' }} style={{ display: 'inline-block', borderRadius: '12px' }}>

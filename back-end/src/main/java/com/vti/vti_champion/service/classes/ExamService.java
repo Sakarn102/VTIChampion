@@ -59,6 +59,16 @@ public class ExamService implements IExamService {
         exam.setTeacher(creator);
         exam.setClassRoom(classRoom);
 
+        if (request.getMaxAttempts() != null && request.getMaxAttempts() > 0) {
+            exam.setMaxAttempts(request.getMaxAttempts());
+        }
+
+        try {
+            exam.setType(com.vti.vti_champion.constant.Type.valueOf(request.getType()));
+        } catch (Exception e) {
+            exam.setType(com.vti.vti_champion.constant.Type.Test);
+        }
+
         List<Question> clonedQuestions = new ArrayList<>();
 
         for (Integer questionId : request.getQuestionIds()) {
@@ -187,6 +197,16 @@ public class ExamService implements IExamService {
         exam.setCode(request.getCode().toUpperCase());
         exam.setDuration(request.getDuration());
 
+        if (request.getMaxAttempts() != null && request.getMaxAttempts() > 0) {
+            exam.setMaxAttempts(request.getMaxAttempts());
+        }
+
+        try {
+            exam.setType(com.vti.vti_champion.constant.Type.valueOf(request.getType()));
+        } catch (Exception e) {
+            // keep existing type
+        }
+
         exam.getQuestions().addAll(clonedQuestions);
 
         // 6. LƯU LẠI
@@ -195,6 +215,19 @@ public class ExamService implements IExamService {
         ExamResponse response = modelMapper.map(exam, ExamResponse.class);
         response.setClassName(exam.getClassRoom().getName());
         if (exam.getType() != null) response.setType(exam.getType().name());
+        return response;
+    }
+
+    @Override
+    public ExamResponse getExamById(Integer id) {
+        Exam exam = examRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy bài thi!"));
+        
+        ExamResponse response = modelMapper.map(exam, ExamResponse.class);
+        if (exam.getTeacher() != null) response.setCreatorName(exam.getTeacher().getFullname());
+        if (exam.getClassRoom() != null) response.setClassName(exam.getClassRoom().getName());
+        if (exam.getType() != null) response.setType(exam.getType().name());
+        
         return response;
     }
 }

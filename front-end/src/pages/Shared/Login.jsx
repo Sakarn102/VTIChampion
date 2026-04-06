@@ -16,6 +16,16 @@ export default function Login() {
     setLoading(true);
     try {
       const res = await authApi.login(values);
+      
+      // Handle TRUONG HOP CHUA XAC THUC OTP (mustVerify: true)
+      if (res && res.mustVerify) {
+        message.warning("Tài Khoản của bạn chưa được kích hoạt. Đang chuyển hướng xác nhận...");
+        setTimeout(() => {
+          navigate("/verify-otp", { state: { email: res.email } });
+        }, 1500);
+        return;
+      }
+
       if (res && res.accessToken) {
         // Lưu token vào localStorage (cho axiosClient)
         localStorage.setItem("token", res.accessToken);
@@ -153,9 +163,9 @@ export default function Login() {
               Đăng nhập ngay
             </Button>
 
-            <div className="register-link">
+            {/* <div className="register-link">
               <a onClick={() => navigate("/register")}>Đăng ký ngay</a>
-            </div>
+            </div> */}
 
           </Form>
         </div>

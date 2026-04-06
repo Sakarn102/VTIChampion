@@ -59,7 +59,8 @@ export default function ExamDetail() {
         title: exam.title,
         code: exam.code,
         duration: exam.duration,
-        classId: exam.classId
+        classId: exam.classId,
+        type: exam.type || 'Test'
       });
       setIsEditModalOpen(true);
     }
@@ -141,6 +142,9 @@ export default function ExamDetail() {
         <div className="header-content-rel">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+              <span className={`type-badge ${exam.type === 'Practice' ? 'practice' : 'test'}`}>
+                {exam.type === 'Practice' ? 'Luyện tập' : 'Đề thi'}
+              </span>
               <span className="code-badge-rel">{exam.code}</span>
               <span className="active-badge-rel">● Đang hoạt động</span>
             </div>
@@ -308,6 +312,13 @@ export default function ExamDetail() {
                   {c.name}
                 </Option>
               ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item label="Loại bài thi" name="type" rules={[{ required: true, message: 'Vui lòng chọn loại bài thi' }]}>
+            <Select size="large">
+              <Option value="Test">Đề thi (Test)</Option>
+              <Option value="Practice">Luyện tập (Practice)</Option>
             </Select>
           </Form.Item>
 

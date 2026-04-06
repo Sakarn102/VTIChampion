@@ -43,8 +43,33 @@ function VerifyOtp(props) {
     }
   };
 
+  const [resending, setResending] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+
+  const handleResendCode = async () => {
+    if (countdown > 0) return;
+    setResending(true);
+    try {
+        await authApi.resendOtp(email);
+        message.success("Mã xác thực mới đã được gửi vào Email của bạn!");
+        setCountdown(60); // Đợi 60s mới cho gửi lại
+    } catch (err) {
+        message.error("Không thể gửi mã, vui lòng thử lại!");
+    } finally {
+        setResending(false);
+    }
+  };
+
   useEffect(() => {
-    if (!email) navigate("/register");
+    let timer;
+    if (countdown > 0) {
+      timer = setInterval(() => setCountdown(c => c - 1), 1000);
+    }
+    return () => clearInterval(timer);
+  }, [countdown]);
+
+  useEffect(() => {
+    if (!email) navigate("/login");
   }, [email, navigate]);
 
   return (
@@ -98,14 +123,26 @@ function VerifyOtp(props) {
             {loading ? "Đang xác thực..." : "Xác nhận tài khoản"}
           </Button>
 
+          <div style={{ marginTop: '10px' }}>
+            <Text type="secondary">Không nhận được mã? </Text>
+            <Button 
+                type="link" 
+                onClick={handleResendCode} 
+                disabled={resending || countdown > 0}
+                style={{ padding: 0, fontWeight: 700 }}
+            >
+                {resending ? "Đang gửi..." : countdown > 0 ? `Gửi lại sau (${countdown}s)` : "Gửi mã xác thực vào Email"}
+            </Button>
+          </div>
+
           <Button
             type="link"
             icon={<ArrowLeftOutlined />}
             disabled={loading}
-            onClick={() => navigate("/register")}
+            onClick={() => navigate("/login")}
             style={{ color: "#bfbfbf" }}
           >
-            Quay lại trang Đăng ký
+            Quay lại trang Đăng nhập
           </Button>
         </Space>
       </Card>

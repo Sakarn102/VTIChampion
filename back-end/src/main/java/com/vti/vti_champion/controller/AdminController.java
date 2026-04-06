@@ -40,6 +40,13 @@ public class AdminController {
         return ResponseEntity.ok(result);
     }
 
+    @PostMapping("/create-account")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> createAccount(@Valid @RequestBody CreateUserRequest request) {
+        AdminUserResponse result = adminService.createAccount(request);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/get-all-class")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<ClassResponse>> getAllClasses(ClassFilterRequest request, Pageable pageable) {

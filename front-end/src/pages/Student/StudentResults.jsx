@@ -169,7 +169,7 @@ const StudentResults = () => {
           dataSource={filteredResults}
           columns={columns}
           loading={loading}
-          pagination={{ pageSize: 10, showSizeChanger: false }}
+          pagination={{ pageSize: 6, showSizeChanger: false }}
         />
       </Card>
     </div>

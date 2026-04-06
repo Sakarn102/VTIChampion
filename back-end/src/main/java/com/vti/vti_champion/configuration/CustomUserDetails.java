@@ -34,6 +34,7 @@ public class CustomUserDetails implements UserDetails {
         this.avatarUrl = user.getAvatarUrl();
         this.password = user.getPassword();
         this.isActive = user.getIsActive();
+        this.enabled = user.isEnabled();
         this.authorities = List.of(new SimpleGrantedAuthority(
                 "ROLE_" + user.getRole().getName().toUpperCase().trim()));
     }
@@ -41,7 +42,7 @@ public class CustomUserDetails implements UserDetails {
     // Method cua userdetail
     @Override
     public boolean isEnabled() {
-        return this.isActive;
+        return this.enabled;
     }
 
     @Override

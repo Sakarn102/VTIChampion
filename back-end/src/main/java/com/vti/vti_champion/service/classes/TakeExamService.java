@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +33,27 @@ public class TakeExamService {
     public Integer startExam(StartExamRequest request, User student) {
         Exam exam = examRepository.findById(request.getExamId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đề thi ID: " + request.getExamId()));
-        
+
+        // Kiểm tra xem học sinh đã có lượt thi IN_PROGRESS chưa
+        Optional<ExamResult> existingInProgress = examResultRepository
+                .findInProgressByUserIdAndExamId(student.getId(), request.getExamId());
+
+        // Nếu đã có lượt đang làm, tái sử dụng lượt đó
+        if (existingInProgress.isPresent()) {
+            return existingInProgress.get().getId();
+        }
+
+        // Kiểm tra số lần thi đã hoàn thành so với giới hạn
+        // Bài luyện tập (Practice) KHÔNG giới hạn số lần
+        boolean isPractice = exam.getType() != null && exam.getType().name().equals("Practice");
+        if (!isPractice && exam.getMaxAttempts() != null && exam.getMaxAttempts() > 0) {
+            long completedAttempts = examResultRepository.countCompletedAttempts(student.getId(), exam.getId());
+            if (completedAttempts >= exam.getMaxAttempts()) {
+                throw new RuntimeException("Bạn đã hết lượt làm bài thi này! (Tối đa: " + exam.getMaxAttempts() + " lần)");
+            }
+        }
+
+        // Chưa có => tạo mới
         ExamResult examResult = new ExamResult();
         examResult.setExam(exam);
         examResult.setStudent(student);

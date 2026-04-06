@@ -503,7 +503,7 @@ const ClassManagement = () => {
       </div>
 
       <div className="premium-table">
-        <Table dataSource={filteredData} columns={columns} rowKey="id" loading={loading} pagination={{ pageSize: 8 }} />
+        <Table dataSource={filteredData} columns={columns} rowKey="id" loading={loading} pagination={{ pageSize: 6, showSizeChanger: false }} />
       </div>
 
       {/* --- Detail & Student CRUD Modal --- */}

@@ -16,7 +16,7 @@ import {
 import { message, Spin, Avatar, Tag } from 'antd';
 import userApi from '../../api/userApi';
 import classApi from '../../api/classApi';
-import examApi from '../../api/ExamApi';
+import examApi from '../../api/examApi';
 import resultApi from '../../api/resultApi';
 import '../../styles/Admin.css';
 import '../../styles/TeacherDashboard.css';

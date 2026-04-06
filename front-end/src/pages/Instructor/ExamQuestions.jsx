@@ -1,11 +1,13 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { getAllExams } from '../../api/examService';
+import { useState, useEffect, useRef } from 'react';
+import { getExamById } from '../../api/examService';
 import questionApi from '../../api/questionApi';
-import { message } from 'antd';
+import { message, Modal, Tag, Checkbox } from 'antd';
+import * as XLSX from 'xlsx';
 import '../../styles/ExamDetail.css';
 import '../../styles/EditExam.css';
 import '../../styles/Home.css';
+import '../../styles/CreateExam.css';
 
 export default function ExamQuestions() {
     const { examId } = useParams();
@@ -14,11 +16,20 @@ export default function ExamQuestions() {
     const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Modal state
     const [modalType, setModalType] = useState(null); // 'add' | 'edit'
     const [currentQ, setCurrentQ] = useState(null);
     const [saving, setSaving] = useState(false);
+    const [importing, setImporting] = useState(false);
+    const fileInputRef = useRef(null);
     const [errorMsg, setErrorMsg] = useState('');
+
+    // Excel import states (Review)
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+    const [importedQuestions, setImportedQuestions] = useState([]);
+    const [excelHeaders, setExcelHeaders] = useState([]);
+    const [originalFileName, setOriginalFileName] = useState('');
+    const [originalFileObj, setOriginalFileObj] = useState(null);
+    const [originalCount, setOriginalCount] = useState(0);
 
     const [form, setForm] = useState({
         content: '',
@@ -37,11 +48,8 @@ export default function ExamQuestions() {
         const fetchExamData = async () => {
             try {
                 setLoading(true);
-                const data = await getAllExams({ size: 1000 });
-                const all = data?.content || (Array.isArray(data) ? data : []);
-                const found = all.find(e =>
-                    String(e.examId) === String(examId) || String(e.id) === String(examId)
-                );
+                const data = await getExamById(examId);
+                const found = data?.data || data;
                 if (found) {
                     setExam(found);
                     setQuestions(found.questions || []);
@@ -204,6 +212,141 @@ export default function ExamQuestions() {
         }
     };
 
+    // ── Import Excel ─────────────────────────────────────
+    const handleDownloadTemplate = async () => {
+        try {
+            const response = await questionApi.downloadTemplate();
+            const blob = new Blob([response.data || response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'question_template.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (e) {
+            console.error('Lỗi tải template:', e);
+            message.error('Không thể tải file template!');
+        }
+    };
+
+    const handleImportClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.value = null; 
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setOriginalFileName(file.name);
+        setOriginalFileObj(file);
+        
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            try {
+                const arrayBuffer = evt.target.result;
+                const wb = XLSX.read(arrayBuffer, { type: 'array' });
+                const wsname = wb.SheetNames[0];
+                const ws = wb.Sheets[wsname];
+                const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+
+                if (data.length > 1) {
+                    setExcelHeaders(data[0]);
+                    const parsedQs = [];
+                    for (let i = 1; i < data.length; i++) {
+                        const row = data[i];
+                        if (row.length === 0 || row.every(cell => !cell || String(cell).trim() === '')) {
+                            continue;
+                        }
+
+                        let contentPreview = row.find(cell => typeof cell === 'string' && cell.trim().length > 5);
+                        contentPreview = contentPreview ? contentPreview.substring(0, 50) : `Câu hỏi dòng ${i + 1}`;
+
+                        parsedQs.push({
+                            tempId: `import_${i}_${Date.now()}`,
+                            content: contentPreview,
+                            rawData: row
+                        });
+                    }
+                    setImportedQuestions(parsedQs);
+                    setOriginalCount(parsedQs.length);
+                    setIsImportModalOpen(true);
+                } else {
+                    message.error("File Excel trống hoặc không có dữ liệu!");
+                }
+            } catch (err) {
+                console.error(err);
+                message.error("Lỗi khi đọc file Excel!");
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    };
+
+    const removeImportedQuestion = (tempId) => {
+        setImportedQuestions(prev => prev.filter(q => q.tempId !== tempId));
+    };
+
+    const confirmImport = async () => {
+        if (importedQuestions.length === 0) {
+            message.warning("Không có câu hỏi nào để import!");
+            return;
+        }
+
+        setImporting(true);
+        const hideLoading = message.loading('Đang xử lý import tới hệ thống...', 0);
+        
+        try {
+            let fileToUpload = null;
+            if (originalFileObj && importedQuestions.length === originalCount) {
+                fileToUpload = originalFileObj;
+            } else {
+                const aoa = [excelHeaders, ...importedQuestions.map(q => q.rawData)];
+                const ws = XLSX.utils.aoa_to_sheet(aoa);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+                const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                fileToUpload = new File([blob], originalFileName, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            }
+
+            const res = await questionApi.importQuestions(fileToUpload, examId);
+            const data = res.data || res;
+            
+            hideLoading();
+            if (data.success > 0) {
+                message.success(`Thành công! Đã thêm ${data.success} câu hỏi vào bài thi.`);
+                setIsImportModalOpen(false);
+                
+                // Refresh data faster by just fetching this exam
+                const fetchExamData = async () => {
+                    try {
+                        const data = await getExamById(examId);
+                        const found = data?.data || data;
+                        if (found) {
+                            setExam(found);
+                            setQuestions(found.questions || []);
+                        }
+                    } catch (err) {
+                        console.error("Lỗi refresh dữ liệu:", err);
+                    }
+                };
+                fetchExamData();
+            } else {
+                message.error(`Import thất bại! ${data.errors?.[0] || ''}`);
+            }
+        } catch (error) {
+            hideLoading();
+            console.error('Import error:', error);
+            message.error('Lỗi khi gửi dữ liệu lên server!');
+        } finally {
+            setImporting(false);
+        }
+    };
+
     // ── Render ────────────────────────────────────────────
     return (
         <div className="exam-detail-container" style={{ padding: 0 }}>
@@ -235,13 +378,37 @@ export default function ExamQuestions() {
                                 </h2>
                                 <p style={{ color: '#64748b', fontSize: '13px' }}>Tổng số: <strong>{questions.length}</strong> câu hỏi</p>
                             </div>
-                            <button
-                                className="btn-primary-mini"
-                                onClick={openAdd}
-                                style={{ padding: '10px 20px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                                Thêm câu mới
-                            </button>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button
+                                    className="btn-secondary"
+                                    onClick={handleDownloadTemplate}
+                                    style={{ padding: '10px 16px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', background: '#f8fafc', color: '#475569', border: '1.5px solid #e2e8f0', cursor: 'pointer', fontWeight: '700' }}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    Tải Template
+                                </button>
+                                <button
+                                    className="btn-secondary"
+                                    onClick={handleImportClick}
+                                    disabled={importing}
+                                    style={{ padding: '10px 16px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', background: '#f0f9ff', color: '#0369a1', border: '1.5px solid #bae6fd', cursor: 'pointer', fontWeight: '700' }}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                    {importing ? 'Đang Import...' : 'Import Excel'}
+                                </button>
+                                <input 
+                                    type="file" 
+                                    accept=".xlsx, .xls" 
+                                    ref={fileInputRef} 
+                                    style={{ display: 'none' }} 
+                                    onChange={handleFileChange} 
+                                />
+                                <button
+                                    className="btn-primary-mini"
+                                    onClick={openAdd}
+                                    style={{ padding: '10px 20px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                                    Thêm câu mới
+                                </button>
+                            </div>
                         </div>
 
                         {/* Question list */}
@@ -392,6 +559,44 @@ export default function ExamQuestions() {
                     </div>
                 </div>
             )}
+            {/* ── Modal Review Import ─────────────────────────── */}
+            <Modal
+                title={<span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" style={{ verticalAlign: 'middle', marginRight: '8px' }}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Xem trước câu hỏi từ Excel</span>}
+                open={isImportModalOpen}
+                onOk={confirmImport}
+                onCancel={() => setIsImportModalOpen(false)}
+                okText={importing ? "Đang xử lý..." : "Xác nhận thêm"}
+                cancelText="Hủy bỏ"
+                confirmLoading={importing}
+                width={700}
+                bodyStyle={{ maxHeight: '450px', overflowY: 'auto' }}
+            >
+                <div style={{ marginBottom: '16px' }}>
+                    <p style={{ color: '#64748b' }}>Hệ thống tìm thấy <strong>{importedQuestions.length}</strong> câu hỏi hợp lệ từ file <strong>{originalFileName}</strong>. Bạn có thể xóa bớt các câu không mong muốn trước khi nhấn "Xác nhận thêm".</p>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {importedQuestions.map((q) => (
+                        <div key={q.tempId} style={{ 
+                            padding: '10px 15px', 
+                            background: '#f8fafc', 
+                            border: '1.1px solid #e2e8f0', 
+                            borderRadius: '8px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <span style={{ fontSize: '13px', color: '#334155', fontWeight: 500 }}>{q.content}...</span>
+                            <button 
+                                onClick={() => removeImportedQuestion(q.tempId)}
+                                style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer', padding: '4px' }}
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
+                        </div>
+                    ))}
+                    {importedQuestions.length === 0 && <p style={{ textAlign: 'center', color: '#94a3b8' }}>Chưa có câu hỏi nào được chọn.</p>}
+                </div>
+            </Modal>
         </div>
     );
 }

@@ -19,8 +19,7 @@ import AdminDashboard from "../pages/Admin/AdminDashboard";
 import UserManagement from "../pages/Admin/UserManagement";
 import ClassManagement from "../pages/Admin/ClassManagement";
 import ExamManagement from "../pages/Admin/ExamManagement";
-import QuestionManagement from "../pages/Admin/QuestionManagement";
-import ResultsManagement from "../pages/Admin/ResultsManagement";
+import SupportManagement from "../pages/Admin/SupportManagement";
 import GenericAdminPage from "../pages/Admin/GenericAdminPage";
 
 // Teacher Layout
@@ -37,6 +36,7 @@ import ClassList from "../pages/Instructor/ClassList";
 import ClassDetail from "../pages/Instructor/ClassDetail";
 import TeacherDashboard from "../pages/Instructor/TeacherDashboard";
 import HelpCenter from "../pages/Instructor/HelpCenter";
+import QuestionManagement from "../pages/Instructor/QuestionManagement";
 
 // Student Pages
 import StudentDashboard from "../pages/Student/StudentDashboard";
@@ -74,14 +74,14 @@ const AppRoutes = () => {
           </GuestRoute>
         }
       />
-      <Route
+      {/* <Route
         path="/register"
         element={
           <GuestRoute>
             <Register />
           </GuestRoute>
         }
-      />
+      /> */}
       <Route
         path="/verify-otp"
         element={
@@ -126,20 +126,7 @@ const AppRoutes = () => {
         <Route path="classes" element={<ClassManagement />} />
         <Route path="classes/:classId" element={<ClassDetail />} />
         <Route path="exams" element={<ExamManagement />} />
-        <Route path="questions" element={<QuestionManagement />} />
-        <Route path="results" element={<ResultsManagement />} />
-        <Route
-          path="reports"
-          element={<GenericAdminPage title="Báo cáo & Phân tích" />}
-        />
-        <Route
-          path="settings"
-          element={<GenericAdminPage title="Cài đặt hệ thống" />}
-        />
-        <Route
-          path="notifications"
-          element={<GenericAdminPage title="Quản lý Thông báo" />}
-        />
+        <Route path="support" element={<SupportManagement />} />
         <Route path="profile" element={<Profile />} />
       </Route>
 
@@ -171,6 +158,7 @@ const AppRoutes = () => {
           element={<ClassDetail />}
         />
         <Route path="help" element={<HelpCenter />} />
+        <Route path="questions" element={<QuestionManagement />} />
         <Route
           path="notifications"
           element={<GenericAdminPage title="Thông báo Giảng viên" />}

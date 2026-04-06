@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import userApi from '../../api/userApi';
 import resultApi from '../../api/resultApi';
 import classApi from '../../api/classApi';
-import examApi from '../../api/ExamApi';
+import examApi from '../../api/examApi';
 import '../../styles/ClassDetail.css';
 
 export default function ClassDetail() {

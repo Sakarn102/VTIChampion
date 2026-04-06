@@ -31,6 +31,7 @@ public class AdminService implements IAdminService {
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final ClassRepository classRepository;
+    private final OtpService otpService;
 
     private static final String DEFAULT_AVATAR = "https://i.pinimg.com/736x/21/91/6e/21916e491ef0d796398f5724c313bbe7.jpg";
 
@@ -94,6 +95,35 @@ public class AdminService implements IAdminService {
         teacher.setEnabled(true);
 
         User savedUser = userRepository.save(teacher);
+
+        return modelMapper.map(savedUser, AdminUserResponse.class);
+    }
+
+    @Override
+    @Transactional
+    public AdminUserResponse createAccount(CreateUserRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new RuntimeException("Username already exists");
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        Setting role = settingRepository.findById(request.getRoleId())
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setFullname(request.getFullName());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setAvatarUrl(DEFAULT_AVATAR);
+        user.setRole(role);
+        user.setIsActive(true);
+        user.setEnabled(false); // Bat buoc xac minh qua OTP
+
+        User savedUser = userRepository.save(user);
 
         return modelMapper.map(savedUser, AdminUserResponse.class);
     }

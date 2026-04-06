@@ -14,4 +14,5 @@ public interface IExamService {
     Page<ExamResponse> getAllExams(String keyword, Integer classId, Integer teacherId, LocalDate startDate, LocalDate endDate, Pageable pageable);
     void deleteExam(Integer id);
     ExamResponse updateExam(Integer examId, UpdateExamRequest request);
+    ExamResponse getExamById(Integer id);
 }

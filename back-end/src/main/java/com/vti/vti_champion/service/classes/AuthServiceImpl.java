@@ -47,8 +47,19 @@ public class AuthServiceImpl implements IAuthService {
             }
 
             // 1. Xác thực người dùng
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getUsernameOrEmail(), request.getPassword()));
+            Authentication authentication;
+            try {
+                authentication = authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(request.getUsernameOrEmail(), request.getPassword()));
+            } catch (org.springframework.security.authentication.DisabledException e) {
+                // Truong hop tai khoan chua enable (chua xac thuc OTP)
+                // Chung ta van cho phep tra ve thong tin de Frontend chuyen den trang OTP
+                return Map.of(
+                        "message", "Account not enabled",
+                        "mustVerify", true,
+                        "email", user.getEmail()
+                );
+            }
 
             // 2. Lấy UserDetails và User Entity
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -79,7 +90,15 @@ public class AuthServiceImpl implements IAuthService {
 
             return Map.of(
                     "message", "Login thanh cong",
-                    "accessToken", accessToken
+                    "accessToken", accessToken,
+                    "user", Map.of(
+                            "id", user.getId(),
+                            "username", user.getUsername(),
+                            "email", user.getEmail(),
+                            "fullname", user.getFullname(),
+                            "role", user.getRole().getName(),
+                            "avatarUrl", user.getAvatarUrl() != null ? user.getAvatarUrl() : ""
+                    )
             );
 
     }

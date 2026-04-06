@@ -14,8 +14,12 @@ import java.util.List;
 
 public interface IQuestionService {
     Page<QuestionResponse> getQuestionsByTeacher(Integer teacherId, Pageable pageable);
+    Page<QuestionResponse> getAllQuestions(Pageable pageable);
+
     QuestionResponse createQuestionByTeacher(Integer teacherId, CreateQuestionRequest request);
+
     Question updateQuestionByTeacher(Integer questionId, Integer currentTeacherId, UpdateQuestionRequest request);
+
     void deleteQuestionByTeacher(Integer questionId, Integer currentTeacherId);
 
     //
