@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { UserOutlined, ArrowLeftOutlined, CheckCircleOutlined, StopOutlined, DeleteOutlined, ExclamationCircleOutlined, TeamOutlined, ProfileOutlined, LineChartOutlined, CalendarOutlined, HistoryOutlined } from '@ant-design/icons';
-import { Avatar, Table, Tag, Button, Modal, message, Tabs, Card, Row, Col, Statistic, Space } from 'antd';
+import { UserOutlined, ArrowLeftOutlined, CheckCircleOutlined, StopOutlined, DeleteOutlined, ExclamationCircleOutlined, TeamOutlined, ProfileOutlined, LineChartOutlined, CalendarOutlined, HistoryOutlined, UserAddOutlined } from '@ant-design/icons';
+import { Avatar, Table, Tag, Button, Modal, message, Tabs, Card, Row, Col, Statistic, Space, Select } from 'antd';
 import dayjs from 'dayjs';
 
 import userApi from '../../api/userApi';
@@ -31,6 +31,13 @@ export default function ClassDetail() {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [studentHistory, setStudentHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+
+  // States cho Modal Thêm học viên
+  const [isAddStudentOpen, setIsAddStudentOpen] = useState(false);
+  const [allStudents, setAllStudents] = useState([]);
+  const [selectedStudentIds, setSelectedStudentIds] = useState([]);
+  const [addingStudents, setAddingStudents] = useState(false);
+  const [loadingAllStudents, setLoadingAllStudents] = useState(false);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -95,6 +102,48 @@ export default function ClassDetail() {
       message.error("Không thể tải lịch sử bài thi.");
     } finally {
       setLoadingHistory(false);
+    }
+  };
+
+  const handleOpenAddStudent = async () => {
+    setIsAddStudentOpen(true);
+    setLoadingAllStudents(true);
+    try {
+      const res = await userApi.getAll({ size: 1000 });
+      const allUsers = res?.content || res?.data?.content || [];
+      // Lọc ra học viên chưa có trong lớp
+      const currentIds = new Set(students.map(s => s.id));
+      const availableStudents = allUsers.filter(u => {
+        const roleName = typeof u.role === 'object' ? u.role?.name : u.role;
+        return (roleName === 'Student' || roleName === 'STUDENT') && !currentIds.has(u.id);
+      });
+      setAllStudents(availableStudents);
+    } catch (err) {
+      message.error('Không thể tải danh sách học viên');
+    } finally {
+      setLoadingAllStudents(false);
+    }
+  };
+
+  const handleAddStudents = async () => {
+    if (!selectedStudentIds.length) {
+      message.warning('Vui lòng chọn ít nhất 1 học viên!');
+      return;
+    }
+    setAddingStudents(true);
+    try {
+      await classApi.addStudentsToClass(Number(classId || classData?.id), selectedStudentIds);
+      message.success(`Đã thêm ${selectedStudentIds.length} học viên vào lớp!`);
+      setIsAddStudentOpen(false);
+      setSelectedStudentIds([]);
+      // Reload danh sách học viên
+      const res = await classApi.getStudentsByClass(classId || classData?.id);
+      const mappedData = Array.isArray(res) ? res.map(s => ({ ...s, name: s.fullname, joinDate: s.createDate })) : [];
+      setStudents(mappedData);
+    } catch (err) {
+      message.error('Thêm học viên thất bại, vui lòng thử lại!');
+    } finally {
+      setAddingStudents(false);
     }
   };
 
@@ -227,13 +276,24 @@ export default function ClassDetail() {
               key: '1',
               label: <span><TeamOutlined />Danh sách học viên</span>,
               children: (
-                  <Table 
-                    dataSource={students} 
-                    columns={columns} 
-                    rowKey="id"
-                    loading={loading}
-                    pagination={{ pageSize: 6, showSizeChanger: false, showTotal: (total) => `Tổng số ${total} học viên` }}
-                  />
+                  <>
+                    <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'flex-end' }}>
+                      <Button
+                        type="primary"
+                        icon={<UserAddOutlined />}
+                        onClick={handleOpenAddStudent}
+                      >
+                        Thêm học viên
+                      </Button>
+                    </div>
+                    <Table 
+                      dataSource={students} 
+                      columns={columns} 
+                      rowKey="id"
+                      loading={loading}
+                      pagination={{ pageSize: 6, showSizeChanger: false, showTotal: (total) => `Tổng số ${total} học viên` }}
+                    />
+                  </>
               )
             },
             {
@@ -315,6 +375,44 @@ export default function ClassDetail() {
             locale={{ emptyText: 'Học viên này chưa có kết quả thi nào' }}
           />
         </div>
+      </Modal>
+
+      {/* Modal Thêm học viên vào lớp */}
+      <Modal
+        title={<span><UserAddOutlined /> Thêm học viên vào lớp</span>}
+        open={isAddStudentOpen}
+        onCancel={() => { setIsAddStudentOpen(false); setSelectedStudentIds([]); }}
+        onOk={handleAddStudents}
+        okText="Thêm vào lớp"
+        cancelText="Hủy"
+        confirmLoading={addingStudents}
+        width={640}
+      >
+        <p style={{ color: '#64748b', marginBottom: 16 }}>
+          Chọn học viên chưa thuộc lớp này để thêm vào danh sách:
+        </p>
+        <Select
+          mode="multiple"
+          style={{ width: '100%' }}
+          placeholder="Tìm và chọn học viên..."
+          value={selectedStudentIds}
+          onChange={setSelectedStudentIds}
+          loading={loadingAllStudents}
+          filterOption={(input, option) =>
+            option?.label?.toLowerCase().includes(input.toLowerCase())
+          }
+          options={allStudents.map(s => ({
+            value: s.id,
+            label: `${s.fullname || s.username} (${s.email})`,
+          }))}
+          size="large"
+          notFoundContent={loadingAllStudents ? 'Đang tải...' : 'Không có học viên nào còn trống'}
+        />
+        {selectedStudentIds.length > 0 && (
+          <p style={{ marginTop: 12, color: '#3b82f6', fontWeight: 600 }}>
+            Đã chọn {selectedStudentIds.length} học viên
+          </p>
+        )}
       </Modal>
     </div>
   );

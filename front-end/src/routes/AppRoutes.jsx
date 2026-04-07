@@ -19,8 +19,7 @@ import AdminDashboard from "../pages/Admin/AdminDashboard";
 import UserManagement from "../pages/Admin/UserManagement";
 import ClassManagement from "../pages/Admin/ClassManagement";
 import ExamManagement from "../pages/Admin/ExamManagement";
-import QuestionManagement from "../pages/Admin/QuestionManagement";
-import ResultsManagement from "../pages/Admin/ResultsManagement";
+import SupportManagement from "../pages/Admin/SupportManagement";
 import GenericAdminPage from "../pages/Admin/GenericAdminPage";
 
 // Teacher Layout
@@ -37,12 +36,15 @@ import ClassList from "../pages/Instructor/ClassList";
 import ClassDetail from "../pages/Instructor/ClassDetail";
 import TeacherDashboard from "../pages/Instructor/TeacherDashboard";
 import HelpCenter from "../pages/Instructor/HelpCenter";
+import QuestionManagement from "../pages/Instructor/QuestionManagement";
 
 // Student Pages
 import StudentDashboard from "../pages/Student/StudentDashboard";
 import StudentExamList from "../pages/Student/ExamList";
 import StudentResults from "../pages/Student/StudentResults";
+import ResultDetail from "../pages/Student/ResultDetail";
 import TakeExam from "../pages/Student/TakeExam";
+import StudentPending from "../pages/Student/StudentPending";
 
 // HomeRedirect để điều hướng user về đúng workspace
 const HomeRedirect = () => {
@@ -51,10 +53,16 @@ const HomeRedirect = () => {
 
   if (user.role === "ADMIN") return <Navigate to="/admin/dashboard" replace />;
   if (user.role === "TEACHER") return <Navigate to="/teacher/dashboard" replace />;
+  
+  if (user.role === "STUDENT" && user.hasClass === false) {
+    return <Navigate to="/student/pending" replace />;
+  }
+  
   return <Navigate to="/student/dashboard" replace />;
 };
 
 const AppRoutes = () => {
+  const { user } = useAuth();
   return (
     <Routes>
       {/* Public Routes - Guest Only */}
@@ -66,14 +74,14 @@ const AppRoutes = () => {
           </GuestRoute>
         }
       />
-      <Route
+      {/* <Route
         path="/register"
         element={
           <GuestRoute>
             <Register />
           </GuestRoute>
         }
-      />
+      /> */}
       <Route
         path="/verify-otp"
         element={
@@ -116,21 +124,9 @@ const AppRoutes = () => {
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="classes" element={<ClassManagement />} />
+        <Route path="classes/:classId" element={<ClassDetail />} />
         <Route path="exams" element={<ExamManagement />} />
-        <Route path="questions" element={<QuestionManagement />} />
-        <Route path="results" element={<ResultsManagement />} />
-        <Route
-          path="reports"
-          element={<GenericAdminPage title="Báo cáo & Phân tích" />}
-        />
-        <Route
-          path="settings"
-          element={<GenericAdminPage title="Cài đặt hệ thống" />}
-        />
-        <Route
-          path="notifications"
-          element={<GenericAdminPage title="Quản lý Thông báo" />}
-        />
+        <Route path="support" element={<SupportManagement />} />
         <Route path="profile" element={<Profile />} />
       </Route>
 
@@ -162,6 +158,7 @@ const AppRoutes = () => {
           element={<ClassDetail />}
         />
         <Route path="help" element={<HelpCenter />} />
+        <Route path="questions" element={<QuestionManagement />} />
         <Route
           path="notifications"
           element={<GenericAdminPage title="Thông báo Giảng viên" />}
@@ -171,10 +168,22 @@ const AppRoutes = () => {
 
       {/* Student Routes */}
       <Route
+        path="/student/pending"
+        element={
+          <ProtectedRoute allowedRoles={["STUDENT"]}>
+            <StudentPending />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/student"
         element={
           <ProtectedRoute allowedRoles={["STUDENT"]}>
-            <StudentLayout />
+            {user?.role === "STUDENT" && user?.hasClass === false ? (
+              <Navigate to="/student/pending" replace />
+            ) : (
+              <StudentLayout />
+            )}
           </ProtectedRoute>
         }
       >
@@ -183,6 +192,7 @@ const AppRoutes = () => {
         <Route path="exams" element={<StudentExamList />} />
         <Route path="take-exam/:examId" element={<TakeExam />} />
         <Route path="results" element={<StudentResults />} />
+        <Route path="results/:resultId" element={<ResultDetail />} />
         <Route path="profile" element={<Profile />} />
       </Route>
 

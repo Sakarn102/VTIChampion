@@ -3,6 +3,7 @@ package com.vti.vti_champion.service.classes;
 import com.vti.vti_champion.dto.request.*;
 import com.vti.vti_champion.dto.response.AdminUserResponse;
 import com.vti.vti_champion.dto.response.ClassResponse;
+import com.vti.vti_champion.dto.response.SettingResponse;
 import com.vti.vti_champion.entity.Class;
 import com.vti.vti_champion.entity.Setting;
 import com.vti.vti_champion.entity.User;
@@ -30,6 +31,7 @@ public class AdminService implements IAdminService {
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final ClassRepository classRepository;
+    private final OtpService otpService;
 
     private static final String DEFAULT_AVATAR = "https://i.pinimg.com/736x/21/91/6e/21916e491ef0d796398f5724c313bbe7.jpg";
 
@@ -94,7 +96,36 @@ public class AdminService implements IAdminService {
 
         User savedUser = userRepository.save(teacher);
 
-        return modelMapper.map(savedUser,AdminUserResponse.class);
+        return modelMapper.map(savedUser, AdminUserResponse.class);
+    }
+
+    @Override
+    @Transactional
+    public AdminUserResponse createAccount(CreateUserRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new RuntimeException("Username already exists");
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        Setting role = settingRepository.findById(request.getRoleId())
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setFullname(request.getFullName());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setAvatarUrl(DEFAULT_AVATAR);
+        user.setRole(role);
+        user.setIsActive(true);
+        user.setEnabled(false); // Bat buoc xac minh qua OTP
+
+        User savedUser = userRepository.save(user);
+
+        return modelMapper.map(savedUser, AdminUserResponse.class);
     }
 
     @Override
@@ -156,14 +187,16 @@ public class AdminService implements IAdminService {
         // 2. Tìm danh sách học sinh từ list ID truyền lên
         List<User> newStudents = userRepository.findAllById(request.getStudentIds());
 
-        // 3. Kiểm tra logic (Chỉ cho phép thêm những User có Role là STUDENT và đang Active)
+        // 3. Kiểm tra logic (Chỉ cho phép thêm những User có Role là STUDENT và đang
+        // Active)
         for (User student : newStudents) {
             if (!student.getRole().getName().equalsIgnoreCase("STUDENT")) {
                 throw new RuntimeException("Người dùng " + student.getUsername() + " không phải là Học sinh");
             }
 
             if (!student.getIsActive()) {
-                throw new RuntimeException("Học sinh "+ student.getUsername() + " đang bị khóa, không thể thêm vào lớp");
+                throw new RuntimeException(
+                        "Học sinh " + student.getUsername() + " đang bị khóa, không thể thêm vào lớp");
             }
 
             // Kiểm tra xem học sinh đã có trong lớp chưa để tránh trùng lặp
@@ -226,5 +259,52 @@ public class AdminService implements IAdminService {
         }
 
         classRepository.save(clazz);
+    }
+
+    @Override
+    @Transactional
+    public void deleteClass(Integer id) {
+        com.vti.vti_champion.entity.Class clazz = classRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Lớp học không tồn tại!"));
+
+        // 1. Gỡ bỏ tất cả học sinh khỏi lớp trước khi xóa (clear class_user join table)
+        if (clazz.getStudents() != null) {
+            clazz.getStudents().clear();
+        }
+
+        // 2. Gỡ bỏ liên kết với các bài thi (set classRoom = null)
+        if (clazz.getExams() != null) {
+            for (com.vti.vti_champion.entity.Exam exam : clazz.getExams()) {
+                exam.setClassRoom(null);
+            }
+        }
+
+        classRepository.save(clazz);
+
+        // 3. Xóa lớp học
+        classRepository.delete(clazz);
+    }
+
+    @Override
+    public List<AdminUserResponse> getUnassignedStudents() {
+        return userRepository.findStudentsWithoutClass().stream()
+                .map(user -> {
+                    AdminUserResponse response = new AdminUserResponse();
+                    response.setId(user.getId());
+                    response.setUsername(user.getUsername());
+                    response.setFullname(user.getFullname());
+                    response.setEmail(user.getEmail());
+                    response.setRoleName(user.getRole().getName());
+                    response.setIsActive(user.getIsActive());
+                    response.setCreatedAt(user.getCreateDate());
+                    return response;
+                }).collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
+    public List<SettingResponse> getSettingsByType(Integer typeId) {
+        return settingRepository.findByType_Id(typeId).stream()
+                .map(s -> new SettingResponse(s.getId(), s.getName()))
+                .collect(java.util.stream.Collectors.toList());
     }
 }

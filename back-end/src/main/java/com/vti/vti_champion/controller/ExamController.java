@@ -25,8 +25,8 @@ public class ExamController {
     @PostMapping("/create-exam")
     public ResponseEntity<?> createExam(@Valid @RequestBody CreateExamRequest request) {
         System.out.println("Dữ liệu nhận được: " + request.toString());
-        examService.createExam(request);
-        return ResponseEntity.ok(Map.of("message", "Tạo mới Exam thành công!"));
+        ExamResponse response = examService.createExam(request);
+        return ResponseEntity.ok(Map.of("message", "Tạo mới Exam thành công!", "examId", response.getExamId()));
     }
 
     @GetMapping("/getAll")
@@ -60,6 +60,12 @@ public class ExamController {
         examService.updateExam(id, request);
 
         return ResponseEntity.ok(Map.of("message", "Update Exam thành công!"));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ExamResponse> getExamById(@PathVariable Integer id) {
+        ExamResponse response = examService.getExamById(id);
+        return ResponseEntity.ok(response);
     }
 
 }

@@ -18,7 +18,8 @@
     "recharts": "^3.8.1",
     "sass": "^1.98.0",
     "toasty": "^6.0.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "prestart": "npx -y copyfiles -u 1 \"src/mcq/**/*\" public",

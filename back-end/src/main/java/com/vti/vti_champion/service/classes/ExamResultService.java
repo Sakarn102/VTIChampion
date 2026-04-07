@@ -1,9 +1,10 @@
 package com.vti.vti_champion.service.classes;
 
-import com.vti.vti_champion.dto.response.StudentResultResponse;
-import com.vti.vti_champion.dto.response.TeacherResultResponse;
+import com.vti.vti_champion.dto.response.*;
 import com.vti.vti_champion.entity.ExamResult;
+import com.vti.vti_champion.entity.StudentAnswer;
 import com.vti.vti_champion.repository.ExamResultRepository;
+import com.vti.vti_champion.repository.StudentAnswerRepository;
 import com.vti.vti_champion.service.interfaces.IExamResultService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ExamResultService implements IExamResultService {
     private final ExamResultRepository examResultRepository;
+    private final StudentAnswerRepository studentAnswerRepository;
     private final ModelMapper modelMapper;
 
     @Override
@@ -32,6 +34,45 @@ public class ExamResultService implements IExamResultService {
                     response.setType(student.getExam().getType().toString());
                     return response;
                 }).collect(Collectors.toList());
+    }
+
+    @Override
+    public ResultDetailResponse getResultDetail(Integer resultId) {
+        ExamResult result = examResultRepository.findById(resultId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy kết quả ID: " + resultId));
+
+        List<StudentAnswer> studentAnswers = studentAnswerRepository.findByExamResultId(resultId);
+
+        List<ResultQuestionDetail> questions = result.getExam().getQuestions().stream()
+                .map(q -> {
+                    Integer chosenId = studentAnswers.stream()
+                            .filter(sa -> sa.getQuestion().getId().equals(q.getId()))
+                            .map(sa -> sa.getAnswer().getId())
+                            .findFirst().orElse(null);
+
+                    List<AnswerResponse> options = q.getAnswers().stream()
+                            .map(a -> new AnswerResponse(a.getId(), a.getContent(), a.getIsCorrect()))
+                            .collect(Collectors.toList());
+
+                    return ResultQuestionDetail.builder()
+                            .questionId(q.getId())
+                            .content(q.getContent())
+                            .explanation(q.getExplanation())
+                            .chosenAnswerId(chosenId)
+                            .options(options)
+                            .build();
+                }).collect(Collectors.toList());
+
+        return ResultDetailResponse.builder()
+                .resultId(resultId)
+                .examTitle(result.getExam().getTitle())
+                .examCode(result.getExam().getCode())
+                .score(result.getScore())
+                .startTime(result.getStartTime())
+                .endTime(result.getEndTime())
+                .status(result.getStatus())
+                .questions(questions)
+                .build();
     }
 
     @Override

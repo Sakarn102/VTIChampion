@@ -12,9 +12,12 @@ const authApi = {
     return axiosClient.post(`/auth/register`, data);
   },
 
-  // verify
   verifyCode: ({ email, code }) => {
     return axiosClient.post(`/auth/verify-code`, { email, code });
+  },
+  
+  resendOtp: (email) => {
+    return axiosClient.post(`/auth/resend-otp?email=${email}`);
   },
 
   // forgot-password

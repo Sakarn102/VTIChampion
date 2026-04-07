@@ -1,6 +1,5 @@
 import React from 'react';
 import { Outlet, Navigate, Link } from 'react-router-dom';
-import { BellOutlined } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
 import ProfileDropdown from '../components/ProfileDropdown';
 
@@ -12,7 +11,7 @@ const StudentLayout = () => {
       <div className="app-header" style={{ position: 'sticky', top: 0, zIndex: 1000 }}>
         <div className="app-logo">
           <div className="logo-dot" style={{ background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px' }}>
-            <span style={{ color: 'white', fontWeight: 'bold' }}>V</span>
+          
           </div>
           <span className="logo-text" style={{ fontWeight: 800 }}>VTI Champion</span>
         </div>
@@ -52,13 +51,8 @@ const StudentLayout = () => {
         </nav>
 
         <div className="header-right">
-          <div className="notification-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg>
-            <div className="notif-badge">3</div>
-          </div>
+          {/* Notification removed */}
+          
           <ProfileDropdown>
             <div className="user-avatar" style={{ background: 'var(--blue-500)', color: 'white' }}>
               {user?.fullname?.charAt(0) || user?.username?.charAt(0) || 'S'}

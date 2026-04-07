@@ -13,4 +13,6 @@ public interface SettingRepository extends JpaRepository<Setting, Integer> {
     Optional<Setting> findByName(String name);
 
     Optional<Setting> findByNameIgnoreCaseAndType_Id(String name, Integer typeId);
+
+    java.util.List<Setting> findByType_Id(Integer typeId);
 }

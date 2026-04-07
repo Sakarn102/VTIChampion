@@ -1,0 +1,14 @@
+{
+  "name": "vtichampion",
+  "version": "1.0.0",
+  "description": "VTI Champion Root Project",
+  "scripts": {
+    "start": "npm start --prefix front-end",
+    "dev:frontend": "npm start --prefix front-end",
+    "dev:backend": "cd back-end && mvnw.cmd spring-boot:run",
+    "dev": "npx -y concurrently \"npm run dev:frontend\" \"npm run dev:backend\""
+  },
+  "dependencies": {
+    "recharts": "^3.8.1"
+  }
+}

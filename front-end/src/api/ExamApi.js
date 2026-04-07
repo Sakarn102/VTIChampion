@@ -2,7 +2,7 @@ import axiosClient from "./axiosClient";
 import { message } from "antd";
 
 /**
- * @param {Object} params - Chứa các field: page, size, keyworld, classId, creatorId, startDate, endDate
+ * @param {Object} params - Chứa các field: page, size, keyword, classId, creatorId, startDate, endDate
  */
 
 export async function getExams(params) {
@@ -10,10 +10,9 @@ export async function getExams(params) {
     const queryParams = {
       ...params,
       page: params.page ? params.page - 1 : 0,
-      size: params.size || 5,
+      size: params.size || 8, // Trùng với pageSize mặc định của FE
     };
 
-    // Correct path from ExamController is /exams/getAll
     const response = await axiosClient.get(`/exams/getAll`, { params: queryParams });
     return response;
   } catch (error) {

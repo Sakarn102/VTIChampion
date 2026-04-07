@@ -6,33 +6,40 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-    
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
-  }, []);
-
   const normalizeUser = (userData) => {
     if (!userData) return null;
     let role = userData.role;
-    // Handle role object from backend: { name: 'ROLE_ADMIN' } or { name: 'ADMIN' }
+
+    // Handle role as object from backend: { name: 'Admin' } or { name: 'ROLE_ADMIN' }
     if (role && typeof role === 'object') {
       role = role.name || role.authority || 'STUDENT';
     }
     
-    // Normalize string: ROLE_ADMIN -> ADMIN
-    if (typeof role === 'string') {
-      role = role.toUpperCase().replace('ROLE_', '');
+    // Normalize string: 'ROLE_ADMIN' -> 'ADMIN', 'Admin' -> 'ADMIN'
+    if (typeof role === 'string' && role.trim() !== '') {
+      role = role.toUpperCase().trim().replace('ROLE_', '');
     } else {
       role = 'STUDENT';
     }
     
     return { ...userData, role };
   };
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+    
+    if (storedUser && token) {
+      // QUAN TRỌNG: Luôn normalize lại khi đọc từ localStorage
+      // để đảm bảo role luôn là string chuẩn (VD: "ADMIN" không phải {name: "Admin"})
+      const parsed = JSON.parse(storedUser);
+      const normalized = normalizeUser(parsed);
+      setUser(normalized);
+      // Cập nhật lại localStorage với data đã normalize
+      localStorage.setItem('user', JSON.stringify(normalized));
+    }
+    setLoading(false);
+  }, []);
 
   const login = (userData, token) => {
     const normalizedUser = normalizeUser(userData);

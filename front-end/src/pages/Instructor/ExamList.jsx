@@ -220,6 +220,7 @@ export default function ExamList() {
             <div className="table-header-cell">Tên bài thi</div>
             <div className="table-header-cell center">Câu hỏi</div>
             <div className="table-header-cell center">Thời gian</div>
+            <div className="table-header-cell center">Loại đề</div>
             <div className="table-header-cell center">Lượt làm</div>
             <div className="table-header-cell center">Điểm TB</div>
             <div className="table-header-cell center">Hành động</div>
@@ -252,13 +253,18 @@ export default function ExamList() {
                   </div>
                   <div className="exam-count-cell center">{exam.questions?.length || 0}</div>
                   <div className="exam-duration-cell center">{exam.duration || 0}p</div>
+                  <div className="exam-type-cell center">
+                    <span className={`type-badge ${exam.type === 'Practice' ? 'practice' : 'test'}`}>
+                      {exam.type === 'Practice' ? 'Luyện tập' : 'Đề thi'}
+                    </span>
+                  </div>
                   <div className="exam-attempts-cell center">{stats.attempts}</div>
                   <div className="exam-score-cell center">
                     <span className={`score-badge ${scoreLevel}`}>
                       {stats.attempts > 0 ? stats.avgScore : "0.0"}
                     </span>
                   </div>
-                  <div className="exam-actions-cell">
+                  <div className="exam-actions-cell center">
                     <button onClick={() => navigate('/teacher/exams/' + id)} className="action-btn action-btn-view" title="Xem chi tiết">
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>

@@ -66,6 +66,12 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/resend-otp")
+    public ResponseEntity<?> resendOtp(@RequestParam String email) {
+        otpService.sendCode(email);
+        return ResponseEntity.ok(Map.of("message", "Mã xác thực mới đã được gửi!"));
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
        authService.logout(request, response);

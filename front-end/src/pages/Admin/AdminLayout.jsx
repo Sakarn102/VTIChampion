@@ -8,11 +8,11 @@ import {
   QuestionCircleOutlined,
   BarChartOutlined,
   SettingOutlined,
-  BellOutlined, 
   SearchOutlined,
   LayoutOutlined,
   MenuOutlined,
-  CloseOutlined
+  CloseOutlined,
+  CustomerServiceOutlined
 } from '@ant-design/icons';
 import { useAuth } from '../../context/AuthContext';
 import ProfileDropdown from '../../components/ProfileDropdown';
@@ -30,13 +30,10 @@ const AdminLayout = () => {
   
   const menuItems = [
     { path: '/admin/dashboard', icon: <AppstoreOutlined />, label: 'Dashboard' },
-    { path: '/admin/users', icon: <UserOutlined />, label: 'Users' },
-    { path: '/admin/classes', icon: <TeamOutlined />, label: 'Classes' },
-    { path: '/admin/exams', icon: <FileTextOutlined />, label: 'Exams' },
-    { path: '/admin/questions', icon: <QuestionCircleOutlined />, label: 'Questions' },
-    { path: '/admin/results', icon: <BarChartOutlined />, label: 'Results' },
-    { path: '/admin/reports', icon: <LayoutOutlined />, label: 'Reports' },
-    { path: '/admin/settings', icon: <SettingOutlined />, label: 'Settings' },
+    { path: '/admin/users', icon: <UserOutlined />, label: 'Quản lý tài khoản' },
+    { path: '/admin/classes', icon: <TeamOutlined />, label: 'Quản lý lớp học' },
+    { path: '/admin/exams', icon: <FileTextOutlined />, label: 'Quản lý bài thi' },
+    { path: '/admin/support', icon: <CustomerServiceOutlined />, label: 'Quản lý hỗ trợ' },
   ];
 
   return (
@@ -85,17 +82,11 @@ const AdminLayout = () => {
                className="mobile-header-toggle" 
                onClick={() => setMobileOpen(true)} 
             />
-            <div className="admin-header-search">
-              <SearchOutlined />
-              <input type="text" placeholder="Tìm kiếm trang, người dùng, bài thi..." />
-            </div>
+           
           </div>
           
           <div className="admin-header-right">
-            <div className="admin-notification" onClick={() => navigate('/admin/notifications')}>
-              <BellOutlined style={{ fontSize: '20px' }} />
-              <span className="badge">12</span>
-            </div>
+            {/* Notification removed */}
             
             <ProfileDropdown>
               <div className="user-avatar" style={{ border: '2px solid var(--blue-100)', borderRadius: '12px', overflow: 'hidden' }}>

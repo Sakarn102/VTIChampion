@@ -20,9 +20,9 @@ export default function Home() {
           <Title level={4} style={{ margin: 0, color: '#0f172a', fontWeight: 800, letterSpacing: '-0.5px' }}>VTI Champion</Title>
         </div>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <Button type="text" onClick={() => navigate('/register')} style={{ fontWeight: 600, color: '#64748b', fontSize: '15px' }}>
+          {/* <Button type="text" onClick={() => navigate('/register')} style={{ fontWeight: 600, color: '#64748b', fontSize: '15px' }}>
             Đăng ký tham gia
-          </Button>
+          </Button> */}
           <Button className="cta-button" type="primary" onClick={() => navigate('/login')} icon={<UserOutlined />} style={{ borderRadius: '8px', fontWeight: 600, height: '42px', padding: '0 24px', fontSize: '15px' }}>
             Đăng nhập
           </Button>

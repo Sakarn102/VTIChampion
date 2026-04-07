@@ -25,6 +25,6 @@ public interface IUserService {
     void resetPassword(String email, String code, String newPassword);
 
     User findById(Integer id);
-
+    void deleteUser(Integer id);
     List<StudentResponse> getStudentsByTeacher(Integer teacherId);
 }
